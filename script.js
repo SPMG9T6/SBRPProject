@@ -19,7 +19,7 @@ function displayOpenRoles() {
         roleList.appendChild(listItem);
     });
 }
-
+// hello
 // Function to view role details
 function viewRoleDetails(index) {
     const roleDescription = document.getElementById('role-description');
