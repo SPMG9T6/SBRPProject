@@ -29,3 +29,19 @@ li {
 }
 
 /* Add more CSS for styling as needed */
+.fixed-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #007BFF; /* Button background color */
+    color: #fff; /* Button text color */
+    padding: 10px 20px; /* Button padding */
+    border: none;
+    border-radius: 5px; /* Rounded corners for the button */
+    cursor: pointer;
+  }
+
+  /* Style for button hover effect */
+  .fixed-button:hover {
+    background-color: #0056b3; /* Change the background color on hover */
+  }
