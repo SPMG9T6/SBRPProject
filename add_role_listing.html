@@ -69,23 +69,40 @@
 <body>
     <div class="container">
     </div>
+
+    <!-- Nav bar -->
     <nav class="navbar">
-        <a href="#"><img src="/All-In-One.png" width="166" height="50" class="d-inline-block align-top" alt=""></a>
+        <a class="navbar-brand" href="#">
+            <img src="/All-In-One.png" width="166" height="50" class="d-inline-block align-top" alt="">
 
-        <div class="container mt-3">
-            <ul class="nav navbar-nav">
-                
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#">Current Applications</a></li> 
-            </ul>
-            <form class="form-inline">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
-        </div>>
+            <div class="container mt-3" style="margin-top: 20px;">
+                <ul class="nav navbar-nav">
+
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#">Current Applications</a></li>
+                </ul>
+
+                <ul class="nav navbar-right">
 
 
+                    <li class="dropdown">
+
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <img src="/staff.png" width="30" height="30" class="d-inline-block align-top" alt="" ?>
+                            Staff
+                            <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Staff</a></li>
+                            <li><a href="#">Manager</a></li>
+                            <li><a href="#">Admin</a></li>
+                        </ul>
+                    </li>
+
+
+
+            </div>
     </nav>
+
     <h1>Add a New Role Listing</h1>
 
     <form id="addRoleForm" action="process_form.php" method="POST">
