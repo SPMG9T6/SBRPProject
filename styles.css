@@ -1,8 +1,13 @@
+.navbar-light .navbar-nav .nav-link {
+    color: #000;
+}
+
 body {
     font-family: Helvetica, sans-serif;
     margin: 20;
     padding: 0;
 }
+
 
 header {
     background-color: green;
