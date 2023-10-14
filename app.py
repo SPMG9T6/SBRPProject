@@ -106,7 +106,7 @@ class Role_Applicants(db.Model):
 
 # create role
 
-@app.route('/role/<action>', methods=['GET','POST'])
+@app.route("/role/<action>", methods=['GET','POST'])
 def role_action(action):
     if request.method == 'POST':
         if action == "create":
