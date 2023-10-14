@@ -68,8 +68,6 @@
     </style>
 </head>
 <body>
-    <div class="container">
-    </div>
 
     <!-- Nav bar -->
     <!-- <nav class="navbar">
@@ -102,21 +100,32 @@
 
 
             </div>
-    </nav> -->
+        </nav> -->
 
-    <h1>Add a New Role Listing</h1>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h1>Add a New Role Listing</h1>
 
-    <form id="addRoleForm" action="/role/create" method="POST">
-        <label for="role_name">Role Title:</label>
-        <input type="text" id="role_name" name="role_name" required>
-    
-        <label for="role_desc">Role Description:</label>
-        <textarea id="role_desc" name="role_desc" rows="4" required></textarea>
-    
-        <input type="submit" value="Submit">
-    </form>
-    
-    <a href="mainpage.html" class="btn btn-primary" style="margin-left: 19px;" id="mainPageLink">Main Page</a>
+                            <form id="addRoleForm" action="/role/create" method="POST">
+                                <div class="form-group">
+                                    <label for="role_name">Role Title:</label>
+                                    <input type="text" class="form-control" id="role_name" name="role_name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="role_desc">Role Description:</label>
+                                    <textarea class="form-control" id="role_desc" name="role_desc" rows="4" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <a href="mainpage.html" class="btn btn-secondary" id="mainPageLink">Main Page</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-</body>
-</html>
+    </body>
+    </html>
