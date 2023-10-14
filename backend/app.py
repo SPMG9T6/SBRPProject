@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, render_template, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import json
@@ -116,7 +116,7 @@ def role_action(action):
             db.session.add(new_role)
             db.session.commit()
             resp = {'response':'create successfully', 'role_name':role_name, 'role_desc':role_desc}
-            return resp
+            return render_template('response.html', resp=resp)
 
         elif action == "read":
             all_role = Role.query.all()
