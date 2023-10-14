@@ -104,19 +104,30 @@
             </div>
     </nav> -->
 
-    <h1>Add a New Role Listing</h1>
-
-    <form id="addRoleForm" action="process_form.php" method="POST">
-        <label for="roleTitle">Role Title:</label>
-        <input type="text" id="roleTitle" name="roleTitle" required>
-
-        <label for="roleDescription">Role Description:</label>
-        <textarea id="roleDescription" name="roleDescription" rows="4" required></textarea>
-
-        <input type="submit" value="Submit">
-        
-    </form>
-    <a href="mainpage.html" class="btn btn-primary" style="margin-left: 19px;" id="mainPageLink">Main Page</a>
-
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+            <h1 class="text-center">Add a New Role Listing</h1>
+            </div>
+            <div class="card-body">
+            <form id="addRoleForm" action="process_form.php" method="POST">
+                <div class="form-group">
+                <label for="roleTitle">Role Title:</label>
+                <input type="text" class="form-control" id="roleTitle" name="roleTitle" required>
+                </div>
+                <div class="form-group">
+                <label for="roleDescription">Role Description:</label>
+                <textarea class="form-control" id="roleDescription" name="roleDescription" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a href="mainpage.html" class="btn btn-secondary" id="mainPageLink">Main Page</a>
+            </form>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
 </body>
 </html>
