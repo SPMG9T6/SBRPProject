@@ -2,90 +2,99 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SBRP</title>
     <!-- Include Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css">
-
+    <title>SBRP</title>
 </head>
+<body>
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-            </li>          
-        </ul>
-        </div>
-    </div>
-</nav>
-
-<!-- Search Bar -->
-
-    <!-- <div class="container" style="margin-top="auto", ; margin-bottom: 20px;" margin-right="auto", margin-left="auto"> -->
-    <div class="container mt-3" >
-
-        <div class="mx-auto" style="width: 300px; margin-bottom: 10px;">
-
-
-            <h3 style="text-align: center;">
-                <b>Staff View </b>
-                <img src="staff.png" width="35" height="35" class="d-inline-block align-top" alt="" style="margin-bottom: 10px;">
-    
-            </h3>
-
-
-            <div class="accordion" id="filterAccordion">
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="filterHeading">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
-                      <span class="filters__headingLabel">Filter by Department</span>
-                      <i class="bi bi-chevron-down"></i>
-                    </button>
-                  </h2>
-                  <div id="filterCollapse" class="accordion-collapse collapse" aria-labelledby="filterHeading" data-bs-parent="#filterAccordion">
-                    <div class="accordion-body">
-                        <form class="form-inline" style="margin-top: 10px;">
-                            <div class="input-group">
-                              <input class="form-control" type="search" placeholder="Filter by Department" aria-label="Filter by Department">
-                              <button class="btn btn-outline-success" type="submit">Search</button>
-                            </div>
-                        </form>
-                      <!-- Filter content goes here -->
-                    </div>
-                  </div>
-                </div>
-              </div>
-        </div>
-
-    </div>
-<!-- Job Application Section  -->
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg fixed-top bg-light navbar-light">
-<div class="container">
-    <a class="navbar-brand" href="#"><img id="All-In-One-logo" src="All-In-One.png" alt="All In One Logo" draggable="false" height="60"/></a>
-    <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <i class="fas fa-bars"></i>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">    
-    <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item">
-            <a class="nav-link" href="mainpage.html">Staff View</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="hrview.html">HR View</a>
-        </li>
+    <div class="container">
+        <a class="navbar-brand" href="#"><img id="All-In-One-logo" src="All-In-One.png" alt="All In One Logo" draggable="false" height="40"/></a>
+        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">    
+        <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+                <a class="nav-link" href="mainpage.html">Staff View</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="hrview.html">HR View</a>
+            </li>
+        </div>
+
     </div>
-</div>
 </nav>
-<!-- Navbar -->
+
+<!-- Status/View -->
+<div class="form-inline ms-auto">
+
+<div class="container">
+    <h3 style="text-align: center; margin-top: 5rem;">
+        <b>Staff View </b>
+        <img src="staff.png" width="35" height="35">
+    </h3>
+</div>
+</div>
+<!-- Status/View -->
+
+
+<div class="form-inline ms-auto">
+<div class="container">
+        <div class="col-md-2">
+            <div class="accordion" id="filterAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="filterHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
+                            <span class="filters__headingLabel">Filter by Department</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+                    </h2>
+                    <div id="filterCollapse" class="accordion-collapse collapse" aria-labelledby="filterHeading" data-bs-parent="#filterAccordion">
+                        <div class="accordion-body">
+                            <form class="form-inline" style="margin-top: 10px;">
+                                <div class="input-group">
+                                    <input class="form-control" type="search">
+                                    <button class="btn btn-outline-success" type="submit">Search</button>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="marketing" id="marketingCheck">
+                                    <label class="form-check-label" for="marketingCheck">
+                                      Marketing
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="sales" id="salesCheck">
+                                    <label class="form-check-label" for="salesCheck">
+                                      Sales
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="hr" id="hrCheck">
+                                    <label class="form-check-label" for="hrCheck">
+                                      HR
+                                    </label>
+                                  </div>
+                                  <button class="btn btn-outline-success" type="submit">Apply</button>
+                                
+                            </form>
+                            <!-- Filter content goes here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-10">
+            <!-- Main content goes here -->
+        </div>
+</div>
+<!-- Job Application Section  -->
+<div class="form-inline ms-auto">
     <div class="container mt-4">
         <div class="row mt-4">
             <div class="col-md-6">
@@ -110,14 +119,14 @@
         </div>
 
     </div>
-
+</div>
     <!-- Fixed "Add Role Listing" button -->
     <button type="button" id="addRoleListingButton" class="fixed-button"
-        onclick="document.location='add_role_listing.html'">Add Role Listing</button>
+        onclick="document.location='add_role_listing.html'">Add Role</button>
 
     <!-- Include Bootstrap JS and Popper.js for Bootstrap functionality -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
     <script src="script.js"></script>
 </body>
 
