@@ -1,12 +1,23 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_cors import CORS
 import json
 
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/sbrpportal'
+if __name__ == '__main__':
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://' + \
+                                            'root:root' + \
+                                            '@localhost:3306/sbrpdb'
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
+                                               'pool_recycle': 280}
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+CORS(app)
 
 app.app_context().push()
 
@@ -99,8 +110,8 @@ class Role_Applicants(db.Model):
 def role_action(action):
     if request.method == 'POST':
         if action == "create":
-            role_name = request.form['name']
-            role_desc = request.form['desc']
+            role_name = request.form['role_name']
+            role_desc = request.form['role_desc']
             new_role = Role(role_name=role_name, role_desc=role_desc)
             db.session.add(new_role)
             db.session.commit()
@@ -166,6 +177,67 @@ def role_action(action):
                 resp = {'response':'something wrong'}
                 return resp
         
+@app.route('/role-applicant-skills/<action>', methods=['GET','POST'])
+def skills_of_role_applicants(action):
+    # skills applicant have skill applicant dont have
+    if request.method == 'POST':
+        if action == "read":
+            role_name = request.form['role_name']
+            role_id = Role.query.filter_by(role_name=role_name)
+            if role_id:
+                role_id = role_id.first().sno
+                all_applicants = Role_Applicants.query.filter_by(role = role_id)
+                # skills_of_applicatant = Staff_Skill.query.filter_by(staff_id = all_applicants.staff)
+                resp = []
+                for i in all_applicants:
+                    all_skills = []
+                    all_skills_query = Staff_Skill.query.filter_by(staff_id=i.staff)
+                    for j in all_skills_query:
+                        all_skills.append(Skill.query.filter_by(sno=j.skill_name).first().skill_name)
+                    resp.append({'name':Staff.query.filter_by(staff_id=i.staff).first().staff_f_name, 'skills':all_skills})
+                return resp
+            else:
+                resp = {'response':'wrong role name'}
+                return resp
+
+        
+
+@app.route('/applicant-skills-match/<action>', methods=['GET','POST'])
+def applicant_skills_match(action):
+    # skills applicaent have skill applicatent dont have
+    if request.method == 'POST':
+        if action == "check":
+            role_name = request.form['role_name']
+            role_id = Role.query.filter_by(role_name=role_name)
+            if role_id:
+                role_id = role_id.first().sno
+                all_roles = Roll_Skill.query.filter_by(role_name=role_id)
+                skills_required = [Skill.query.filter_by(sno=row.skill_name).first().skill_name for row in all_roles]
+                
+                all_applicants = Role_Applicants.query.filter_by(role = role_id)
+                # skills_of_applicatant = Staff_Skill.query.filter_by(staff_id = all_applicants.staff)
+                resp = []
+
+                for i in all_applicants:
+                    skills_match = []
+                    skills_not_match = []
+                    staff_skills = []
+
+                    all_skills_query = Staff_Skill.query.filter_by(staff_id=i.staff)
+                    
+                    for j in all_skills_query:
+                        skill_name = Skill.query.filter_by(sno=j.skill_name).first().skill_name
+                        staff_skills.append(skill_name)
+                        if skill_name in skills_required:
+                            skills_match.append(skill_name)
+                        else:
+                            skills_not_match.append(skill_name)
+                    resp.append({'name':Staff.query.filter_by(staff_id=i.staff).first().staff_f_name,'staff_skills':staff_skills, 'skills_required':skills_required, 'skills_match':skills_match, 'skills_not_match':skills_not_match})
+                return resp
+            else:
+                resp = {'response':'wrong role name'}
+                return resp
+            
 
 if __name__ == "__main__":
     app.run(debug=True)

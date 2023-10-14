@@ -13,3 +13,4 @@ SQLAlchemy==2.0.21
 typing_extensions==4.8.0
 Werkzeug==3.0.0
 zipp==3.17.0
+mysql-connector==2.2.9
