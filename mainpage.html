@@ -8,31 +8,24 @@
     <title>SBRP</title>
     <!-- Include Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css">
 
 </head>
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#">Navbar</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-              </li>
-           
-
-              
-
-            </ul>
-            
-          </div>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            </li>          
+        </ul>
         </div>
-      </nav>
+    </div>
+</nav>
 
 <!-- Search Bar -->
 
@@ -48,56 +41,47 @@
     
             </h3>
 
-            <form class="form-inline">
-                <input class="form-control" type="search" placeholder="Search for Jobs"
-                    aria-label="Search for Jobs">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
 
-            <form class="form-inline" style="margin-top: 10px;">
-                <input class="form-control " type="search" placeholder="Filter by Skill"
-                    aria-label="Filter by Skill">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit" >Search</button>
-            </form>
-
+            <div class="accordion" id="filterAccordion">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="filterHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
+                      <span class="filters__headingLabel">Filter by Department</span>
+                      <i class="bi bi-chevron-down"></i>
+                    </button>
+                  </h2>
+                  <div id="filterCollapse" class="accordion-collapse collapse" aria-labelledby="filterHeading" data-bs-parent="#filterAccordion">
+                    <div class="accordion-body">
+                        <form class="form-inline" style="margin-top: 10px;">
+                            <div class="input-group">
+                              <input class="form-control" type="search" placeholder="Filter by Department" aria-label="Filter by Department">
+                              <button class="btn btn-outline-success" type="submit">Search</button>
+                            </div>
+                        </form>
+                      <!-- Filter content goes here -->
+                    </div>
+                  </div>
+                </div>
+              </div>
         </div>
 
-    </div<!-- Job Application Section  -->
+    </div>
+<!-- Job Application Section  -->
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg fixed-top bg-light navbar-light">
 <div class="container">
-    <a class="navbar-brand" href="#"
-    ><img
-        id="All-In-One-logo"
-        src="All-In-One.png"
-        alt="All In One Logo"
-        draggable="false"
-        height="60"
-    /></a>
-    <button
-    class="navbar-toggler"
-    type="button"
-    data-mdb-toggle="collapse"
-    data-mdb-target="#navbarSupportedContent"
-    aria-controls="navbarSupportedContent"
-    aria-expanded="false"
-    aria-label="Toggle navigation"
-    >
-    <i class="fas fa-bars"></i>
+    <a class="navbar-brand" href="#"><img id="All-In-One-logo" src="All-In-One.png" alt="All In One Logo" draggable="false" height="60"/></a>
+    <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav ms-auto align-items-center">
-    
-
-       
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">    
     <ul class="navbar-nav ms-auto align-items-center">
         <li class="nav-item">
-        <a class="nav-link" href="mainpage.html">Staff View</a>
+            <a class="nav-link" href="mainpage.html">Staff View</a>
         </li>
         <li class="nav-item">
-        <a class="nav-link" href="hrview.html">HR View</a>
+            <a class="nav-link" href="hrview.html">HR View</a>
         </li>
-       
     </div>
 </div>
 </nav>
