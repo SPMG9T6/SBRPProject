@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import json
@@ -221,7 +221,7 @@ def applicant_skills_match(action):
             role_id = Role.query.filter_by(role_name=role_name)
             if role_id:
                 role_id = role_id.first().sno
-                all_roles = Roll_Skill.query.filter_by(role_name=role_id)
+                all_roles = Role_Skill.query.filter_by(role_name=role_id)
                 skills_required = [Skill.query.filter_by(sno=row.skill_name).first().skill_name for row in all_roles]
                 
                 all_applicants = Role_Applicants.query.filter_by(role = role_id)
@@ -248,6 +248,33 @@ def applicant_skills_match(action):
                 resp = {'response':'wrong role name'}
                 return resp
             
+
+@app.route('/role_listings')
+def display_role_listings():
+    # Fetch role listings from the database
+    role_listings = Role_Listings.query.all()
+    return render_template('role_listings.html', role_listings=role_listings)
+
+# Route to add a new role listing
+@app.route('/add_role_listing', methods=['GET', 'POST'])
+def add_role_listing():
+    if request.method == 'POST':
+        role_name = request.form['role_name']
+        role_desc = request.form['role_desc']
+        skill_name = request.form['skill_name']
+
+        # Create a new role listing
+        role_listing = Role_Listings(role_name=role_name, role_desc=role_desc, skill_name=skill_name)
+
+        # Add the role listing to the database
+        db.session.add(role_listing)
+        db.session.commit()
+
+        return redirect(url_for('display_role_listings'))
+
+    return render_template('add_role_listing.html')
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

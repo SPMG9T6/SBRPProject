@@ -95,13 +95,17 @@
                         <div class="card-header">
                             <h1>Add a New Role Listing</h1>
 
-                            <form id="addRoleForm" action="http://localhost:5000/role/create" method="POST">
+                            <form id="addRoleForm" action="/submit" method="POST">
                                 <div class="form-group">
                                     <label for="role_name">Role Title:</label>
                                     <input type="text" class="form-control" id="role_name" name="role_name" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="role_desc">Role Description:</label>
+                                    <textarea class="form-control" id="role_desc" name="role_desc" rows="4" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="role_desc">Skills</label>
                                     <textarea class="form-control" id="role_desc" name="role_desc" rows="4" required></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Submit</button>

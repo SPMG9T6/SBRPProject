@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Role Listings</title>
+</head>
+<body>
+
+<h2>Existing Role Listings</h2>
+
+<!-- Display existing role listings -->
+<ul>
+    {% for role_listing in role_listings %}
+        <li>
+            Role Name: {{ role_listing.role_name }}<br>
+            Role Description: {{ role_listing.role_desc }}<br>
+            Skill Name: {{ role_listing.skill_name }}
+        </li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
