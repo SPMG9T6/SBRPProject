@@ -103,6 +103,16 @@ class Role_Applicants(db.Model):
 
     def __repr__(self) -> str:
         return f"{self.role}-{self.staff}"
+    
+class Role_Listings(db.Model):
+    __tablename__ = 'role_listings'
+    role_name = db.Column(db.String(50), primary_key=True)
+    role_desc = db.Column(db.String(255))
+    skill_name = db.Column(db.String(50), primary_key=True)
+
+    def __repr__(self) -> str:
+        return f"RoleListings('{self.role_name}', '{self.role_desc}', '{self.skill_name}')"
+
 
 # create role
 

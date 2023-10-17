@@ -3743,3 +3743,28 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+-- Drop the role_listings table if it exists
+DROP TABLE IF EXISTS role_listings;
+
+-- Create the role_listings table
+CREATE TABLE role_listings (
+    role_name VARCHAR(50),
+    role_desc VARCHAR(255),
+    skill_name VARCHAR(50),
+    PRIMARY KEY (role_name, skill_name),
+    FOREIGN KEY (role_name) REFERENCES Role(Role_Name),
+    FOREIGN KEY (skill_name) REFERENCES Role_Skill(Skill_Name)
+);
+
+-- Insert data into role_listings
+INSERT INTO role_listings (role_name, role_desc, skill_name)
+SELECT
+    r.Role_Name,
+    r.Role_Desc,
+    rs.Skill_Name
+FROM
+    Role r
+JOIN
+    Role_Skill rs ON r.Role_Name = rs.Role_Name;
