@@ -109,23 +109,64 @@
                         <div class="card-header">
                             <h1>Add a New Role Listing</h1>
 
-                            <form id="addRoleForm" action="http://localhost:5000/role/creates" method="POST">
+                            <form id="addRoleForm" action="http://localhost:5000/add_role_listing/create" method="POST">
                                 <div class="form-group">
-                                    <label for="role_name">Role Title:</label>
-                                    <input type="text" class="form-control" id="role_name" name="role_name" required>
+                                    <label for="role_name">Role Name:</label>
+                                    <select name="role_name">
+                                        <option value="" disabled selected>Select a Role</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="role_desc">Role Description:</label>
-                                    <textarea class="form-control" id="role_desc" name="role_desc" rows="4" required></textarea>
+                                    <label for="skill_name">Skill Name:</label>
+                                    <select name="skill_name">
+                                        <option value="" disabled selected>Select a Skill</option>
+                                    </select>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                                <a href="mainpage.html" class="btn btn-secondary" id="mainPageLink">Main Page</a>
+                                <button type="submit">Submit</button>
                             </form>
+                            
+                            <script>
+                                function populateRoles() {
+                                    fetch('http://localhost:5000/get_roles')
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            const roleSelect = document.querySelector('select[name="role_name"]');
+                                            roleSelect.innerHTML = '<option value="" disabled selected>Select a Role</option>';
+                                            data.forEach(role => {
+                                                roleSelect.innerHTML += `<option value="${role.role_name}">${role.role_name}</option>`;
+                                            });
+                                        });
+                                }
+                            
+                                function populateSkills() {
+                                    fetch('http://localhost:5000/get_skills')
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            const skillSelect = document.querySelector('select[name="skill_name"]');
+                                            skillSelect.innerHTML = '<option value="" disabled selected>Select a Skill</option>';
+                                            data.forEach(skill => {
+                                                skillSelect.innerHTML += `<option value="${skill.skill_name}">${skill.skill_name}</option>`;
+                                            });
+                                        });
+                                }
+                            
+                                // Call the populateRoles and populateSkills functions when the page loads
+                                window.onload = () => {
+                                    populateRoles();
+                                    populateSkills();
+                                };
+                            </script>
+                            
+                            
+                            
+                             
+                            
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
+        
+        
     </body>
     </html>

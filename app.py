@@ -4,6 +4,9 @@ from flask_cors import CORS
 import json
 
 app = Flask(__name__)
+app.static_folder = 'static'
+CORS(app)
+
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 if __name__ == '__main__':
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://' + \
@@ -16,8 +19,6 @@ else:
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
-CORS(app)
 
 app.app_context().push()
 
@@ -48,9 +49,7 @@ class Staff(db.Model):
 
 class Skill(db.Model):
     __tablename__ = 'skill'
-
-    sno = db.Column(db.Integer, primary_key=True)
-    skill_name = db.Column(db.String(50), nullable=False)
+    skill_name = db.Column(db.String(20), primary_key=True)
     skill_desc = db.Column(db.Text(), nullable=False)
 
     def __repr__(self) -> str:
@@ -59,19 +58,17 @@ class Skill(db.Model):
 class Staff_Skill(db.Model):
     __tablename__ = 'staff_skill'
 
-    sno = db.Column(db.Integer, primary_key=True)
     staff_id = db.Column(db.Integer, db.ForeignKey('staff.staff_id'),
-        nullable=False)
-    skill_name = db.Column(db.Integer, db.ForeignKey('skill.sno'),
-        nullable=False)
+        primary_key=True)
+    skill_name = db.Column(db.Integer, db.ForeignKey('skill.skill_name'),
+        primary_key=True)
 
     def __repr__(self) -> str:
         return f"{self.skill_name}"
 
 class Role(db.Model):
     __tablename__ = 'role'
-    sno = db.Column(db.Integer, primary_key=True)
-    role_name = db.Column(db.String(20), nullable=False)
+    role_name = db.Column(db.String(20), primary_key=True)
     role_desc = db.Column(db.Text(), nullable=False)
 
 
@@ -80,12 +77,10 @@ class Role(db.Model):
 
 class Role_Skill(db.Model):
     __tablename__ = 'role_skill'
-
-    sno = db.Column(db.Integer, primary_key=True)
-    role_name = db.Column(db.Integer, db.ForeignKey('role.sno'),
-        nullable=False)
-    skill_name = db.Column(db.Integer, db.ForeignKey('skill.sno'),
-        nullable=False)
+    role_name = db.Column(db.Integer, db.ForeignKey('role.role_name'),
+        primary_key=True)
+    skill_name = db.Column(db.Integer, db.ForeignKey('skill.skill_name'),
+        primary_key=True)
     
 
     def __repr__(self) -> str:
@@ -104,16 +99,6 @@ class Role_Applicants(db.Model):
     def __repr__(self) -> str:
         return f"{self.role}-{self.staff}"
     
-class Role_Listings(db.Model):
-    __tablename__ = 'role_listings'
-    role_name = db.Column(db.String(50), primary_key=True)
-    role_desc = db.Column(db.String(255))
-    skill_name = db.Column(db.String(50), primary_key=True)
-
-    def __repr__(self) -> str:
-        return f"RoleListings('{self.role_name}', '{self.role_desc}', '{self.skill_name}')"
-
-
 # create role
 
 @app.route("/role/<action>", methods=['GET','POST'])
@@ -249,31 +234,49 @@ def applicant_skills_match(action):
                 return resp
             
 
-@app.route('/role_listings')
-def display_role_listings():
-    # Fetch role listings from the database
-    role_listings = Role_Listings.query.all()
-    return render_template('role_listings.html', role_listings=role_listings)
-
 # Route to add a new role listing
-@app.route('/add_role_listing', methods=['GET', 'POST'])
+
+@app.route('/add_role_listing/create', methods=['GET', 'POST'])
 def add_role_listing():
     if request.method == 'POST':
         role_name = request.form['role_name']
-        role_desc = request.form['role_desc']
         skill_name = request.form['skill_name']
 
         # Create a new role listing
-        role_listing = Role_Listings(role_name=role_name, role_desc=role_desc, skill_name=skill_name)
+        new_role_listing = Role_Skill(role_name=role_name, skill_name=skill_name)
 
         # Add the role listing to the database
-        db.session.add(role_listing)
+        db.session.add(new_role_listing)
         db.session.commit()
 
-        return redirect(url_for('display_role_listings'))
+        resp = {'response':'create successfully', 'role_name':role_name, 'skill_name':skill_name}
+        return render_template('response.html', resp=resp)
+    
+    # Fetch the list of skills and roles for the dropdowns
+    skills = Skill.query.all()
+    roles = Role.query.all()
 
-    return render_template('add_role_listing.html')
+    return render_template('add_role_listing.html', skills=skills, roles=roles)
 
+@app.route('/get_skills', methods=['GET'])
+def get_skills():
+    # Fetch the list of skills from your database or another data source
+    skills = Skill.query.all()  # Assuming you have a Skill model
+
+    # Convert the skills to a format suitable for JSON response
+    skill_list = [{'skill_name': skill.skill_name, 'skill_desc': skill.skill_desc} for skill in skills]
+
+    return jsonify(skill_list)
+
+@app.route('/get_roles', methods=['GET'])
+def get_roles():
+    # Fetch the list of roles from your database or another data source
+    roles = Role.query.all()  # Assuming you have a Role model
+
+    # Convert the roles to a format suitable for JSON response
+    role_list = [{'role_name': role.role_name, 'role_desc': role.role_desc} for role in roles]
+
+    return jsonify(role_list)
 
 
 if __name__ == "__main__":
