@@ -90,7 +90,7 @@ class Role_Applicants(db.Model):
     __tablename__ = 'role_applicants'
 
     sno = db.Column(db.Integer, primary_key=True)
-    role = db.Column(db.Integer, db.ForeignKey('role.sno'),
+    role = db.Column(db.Integer, db.ForeignKey('role.role_name'),
         nullable=False)
     staff = db.Column(db.Integer, db.ForeignKey('staff.staff_id'),
         nullable=False)
@@ -163,7 +163,7 @@ def role_action(action):
             or_role = Role.query.filter_by(role_name=role_name).first()
             or_staff = Staff.query.filter_by(staff_id=staff_id).first()
             if or_role and or_staff:
-                new_entry = Role_Applicants(role=or_role.sno, staff=or_staff.staff_id)
+                new_entry = Role_Applicants(role=or_role.role_name, staff=or_staff.staff_id)
                 db.session.add(new_entry)
                 db.session.commit()
                 resp = {'response': f'{or_staff.staff_f_name} Successfully Applied for {or_role.role_name}'}
@@ -182,7 +182,7 @@ def skills_of_role_applicants(action):
             if role_id:
                 role_id = role_id.first().sno
                 all_applicants = Role_Applicants.query.filter_by(role = role_id)
-                # skills_of_applicatant = Staff_Skill.query.filter_by(staff_id = all_applicants.staff)
+                # skills_of_applicant = Staff_Skill.query.filter_by(staff_id = all_applicants.staff)
                 resp = []
                 for i in all_applicants:
                     all_skills = []
@@ -210,7 +210,7 @@ def applicant_skills_match(action):
                 skills_required = [Skill.query.filter_by(sno=row.skill_name).first().skill_name for row in all_roles]
                 
                 all_applicants = Role_Applicants.query.filter_by(role = role_id)
-                # skills_of_applicatant = Staff_Skill.query.filter_by(staff_id = all_applicants.staff)
+                # skills_of_applicant = Staff_Skill.query.filter_by(staff_id = all_applicants.staff)
                 resp = []
 
                 for i in all_applicants:
@@ -278,6 +278,19 @@ def get_roles():
 
     return jsonify(role_list)
 
+@app.route('/get_role_skill', methods=['GET'])
+def get_role_skill():
+    role_name = request.args.get('roleName')
+    
+    # Query the database to get the skill for the role
+    role_skill = Role_Skill.query.filter_by(role_name=role_name).first()
+    
+    if role_skill:
+        # If the role skill is found, return its skill name
+        return jsonify({'skill_name': role_skill.skill_name})
+    else:
+        # Return an error response if the role skill is not found
+        return jsonify({'error': 'Role skill not found'})
 
 if __name__ == "__main__":
     app.run(debug=True)
