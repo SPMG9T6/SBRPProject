@@ -98,9 +98,19 @@ class Role_Applicants(db.Model):
 
     def __repr__(self) -> str:
         return f"{self.role}-{self.staff}"
-    
-# create role
 
+class Role_Listing(db.Model):
+    __tablename__ = 'role_listing'
+    role_name = db.Column(db.Integer, db.ForeignKey('role.role_name'),
+        primary_key=True)
+    deadline = db.Column(db.Integer,
+        primary_key=True)
+    
+
+    def __repr__(self) -> str:
+        return f"{self.role_name}-{self.deadline}"
+
+# create role
 @app.route("/role/<action>", methods=['GET','POST'])
 def role_action(action):
     if request.method == 'POST':
@@ -240,23 +250,19 @@ def applicant_skills_match(action):
 def add_role_listing():
     if request.method == 'POST':
         role_name = request.form['role_name']
-        skill_name = request.form['skill_name']
+        deadline = request.form['deadline']
 
         # Create a new role listing
-        new_role_listing = Role_Skill(role_name=role_name, skill_name=skill_name)
+        new_role_listing = Role_Listing(role_name=role_name, deadline=deadline)
 
         # Add the role listing to the database
         db.session.add(new_role_listing)
         db.session.commit()
 
-        resp = {'response':'create successfully', 'role_name':role_name, 'skill_name':skill_name}
+        resp = {'response':'Role Listing Created Successfully', 'role_name':role_name, 'deadline':deadline}
         return render_template('response.html', resp=resp)
     
-    # Fetch the list of skills and roles for the dropdowns
-    skills = Skill.query.all()
-    roles = Role.query.all()
-
-    return render_template('add_role_listing.html', skills=skills, roles=roles)
+    return render_template('add_role_listing.html', deadline=deadline, roles=role_name)
 
 @app.route('/get_skills', methods=['GET'])
 def get_skills():
@@ -291,7 +297,7 @@ def get_role_skill():
     else:
         # Return an error response if the role skill is not found
         return jsonify({'error': 'Role skill not found'})
-
+        
 if __name__ == "__main__":
     app.run(debug=True)
 
