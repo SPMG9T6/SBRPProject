@@ -109,6 +109,63 @@ class Role_Listing(db.Model):
 
     def __repr__(self) -> str:
         return f"{self.role_name}-{self.deadline}"
+    
+class Application(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    staff_id = db.Column(db.String(50), db.ForeignKey('staff.staff_id'), nullable=False)
+    staff_f_name = db.Column(db.String(50), db.ForeignKey('staff.staff_f_name'), nullable=False)
+    staff_l_name = db.Column(db.String(50), db.ForeignKey('staff.staff_l_name'), nullable=False)
+    email = db.Column(db.String(50), db.ForeignKey('staff.email'), nullable=False)
+    country = db.Column(db.String(50), db.ForeignKey('staff.country'), nullable=False)
+    role_name = db.Column(db.String(50), db.ForeignKey('role.role_name'), primary_key=True)
+
+    def __init__(self, role_name, staff_id, staff_f_name, staff_l_name, email, country):
+        self.role_name = role_name
+        self.staff_id = staff_id
+        self.staff_f_name = staff_f_name
+        self.staff_l_name = staff_l_name
+        self.email = email
+        self.country = country
+    
+    
+@app.route('/')
+def view_roles():
+    # Query the database to get a list of role listings
+    roles = Role.query.all()
+
+    return render_template('view_roles.html', roles=roles)
+
+#staff apply for role
+@app.route('/apply_role', methods=['GET', 'POST'])
+def apply_role():
+    if request.method == 'POST':
+        role_name = request.form['role_name']
+        staff_id = request.form['staff_id']
+        staff_f_name = request.form['staff_fname']
+        staff_l_name = request.form['staff_lname']
+        email = request.form['email']
+        country = request.form['country']
+
+        # Save the application details to the database
+        application = Application(role_name=role_name, staff_id=staff_id, staff_f_name=staff_f_name, staff_l_name=staff_l_name, email=email, country=country)
+        db.session.add(application)
+        db.session.commit()
+
+        return redirect(url_for('thank_you'))  # Redirect to the thank you page
+
+    # If the request method is GET, render the form
+    role_name = request.args.get('role_name')
+
+    # Fetch a list of distinct countries from the staff table
+    countries = db.session.query(Staff.country).distinct().all()
+    countries = [country[0] for country in countries]  # Extract country names
+    return render_template('apply_role.html', role_name=role_name, countries=countries)
+
+
+@app.route('/thank_you')
+def thank_you():
+    return render_template('thank_you.html')
+
 
 # create role
 @app.route("/role/<action>", methods=['GET','POST'])
