@@ -105,6 +105,7 @@ class Role_Listing(db.Model):
         primary_key=True)
     deadline = db.Column(db.Integer,
         primary_key=True)
+    department = db.Column(db.String(20))
     
 
     def __repr__(self) -> str:
@@ -308,15 +309,16 @@ def add_role_listing():
     if request.method == 'POST':
         role_name = request.form['role_name']
         deadline = request.form['deadline']
+        department = request.form['department']
 
         # Create a new role listing
-        new_role_listing = Role_Listing(role_name=role_name, deadline=deadline)
+        new_role_listing = Role_Listing(role_name=role_name, deadline=deadline, department=department)
 
         # Add the role listing to the database
         db.session.add(new_role_listing)
         db.session.commit()
 
-        resp = {'response':'Role Listing Created Successfully', 'role_name':role_name, 'deadline':deadline}
+        resp = {'response':'Role Listing Created Successfully', 'role_name':role_name, 'deadline':deadline, 'department':department}
         return render_template('response.html', resp=resp)
     
     return render_template('add_role_listing.html', deadline=deadline, roles=role_name)
