@@ -110,6 +110,9 @@
             <!-- Roles taking up 2/3 of the column on the right -->
             <div class="col-md-8 mt-4">
                 <div class="row" id="cardContainer">
+                    <div id="noFilterSelected" style="display: none;">
+                        <p class="text-center">No filter selected. Please select a filter.</p>
+                    </div>
                     <!-- Loop through the first 6 roles -->
                     {% for role in roles[:6] %}
                         <div class="col-md-6 mb-4 card-container" data-department="{{role.department}}">
@@ -193,23 +196,36 @@
         // Function to show the modal
 
         $(document).ready(function() {
-        $('input[name="department"]').on('change', function() {
-            const selectedDepartments = $('input[name="department"]:checked')
-                .map(function() {
-                    return $(this).val();
-                })
-                .get();
+    $('input[name="department"]').on('change', function() {
+        const selectedDepartments = $('input[name="department"]:checked')
+            .map(function() {
+                return $(this).val();
+            })
+            .get();
 
-            if (selectedDepartments.length === 0) {
-                $('.card-container').show();
-            } else {
-                $('.card-container').hide();
-                selectedDepartments.forEach(function(department) {
-                    $(`.card-container[data-department="${department}"]`).show();
-                });
-            }
-        });
+        // Hide all card containers by default
+        $('.card-container').hide();
+
+        if (selectedDepartments.length > 0) {
+            // Show card containers for the selected departments
+            selectedDepartments.forEach(function(department) {
+                $(`.card-container[data-department="${department}"]`).show();
+            });
+
+            // Show the "See More" button
+            $('#see-more-button').show();
+
+            // Hide the "No filter selected" message
+            $('#noFilterSelected').hide();
+        } else {
+            // No filters selected, hide the "See More" button
+            $('#see-more-button').hide();
+
+            // Show the "No filter selected" message
+            $('#noFilterSelected').show();
+        }
     });
+});
 
         function showModal(modalId) {
             $('#'+modalId).modal('show');
