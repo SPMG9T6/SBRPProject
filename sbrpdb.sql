@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 21, 2023 at 02:34 PM
+-- Generation Time: Oct 25, 2023 at 12:13 PM
 -- Server version: 8.0.21
 -- PHP Version: 7.4.9
 
@@ -45,6 +45,26 @@ INSERT INTO `access_control` (`Access_ID`, `Access_Control_ Name`) VALUES
 (2, 'User'),
 (3, 'Manager'),
 (4, 'HR');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `application`
+--
+
+DROP TABLE IF EXISTS `application`;
+CREATE TABLE IF NOT EXISTS `application` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `staff_id` int NOT NULL COMMENT 'Staff ID for staff',
+  `staff_f_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'First Name',
+  `staff_l_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Last Name',
+  `email` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Email Address',
+  `country` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Country of operation',
+  `Role_Name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Role Name FK to Role-Role_Name',
+  PRIMARY KEY (`id`),
+  KEY `fk_rl_role_name` (`Role_Name`) USING BTREE,
+  KEY `fk_staff_id` (`staff_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -96,10 +116,18 @@ INSERT INTO `role` (`Role_Name`, `Role_Desc`) VALUES
 DROP TABLE IF EXISTS `role_listing`;
 CREATE TABLE IF NOT EXISTS `role_listing` (
   `Role_Name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Role Name FK to Role-Role_Name',
-  `deadline` date NOT NULL,
+  `deadline` date NOT NULL COMMENT 'deadline for application',
+  `department` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'department',
   PRIMARY KEY (`Role_Name`,`deadline`),
   KEY `fk_rl_role_name` (`Role_Name`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `role_listing`
+--
+
+INSERT INTO `role_listing` (`Role_Name`, `deadline`, `department`) VALUES
+('Developer', '2023-10-25', 'IT');
 
 -- --------------------------------------------------------
 
@@ -3734,6 +3762,12 @@ INSERT INTO `staff_skill` (`Staff_ID`, `Skill_Name`) VALUES
 --
 
 --
+-- Constraints for table `application`
+--
+ALTER TABLE `application`
+  ADD CONSTRAINT `fk_staff_id` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`Staff_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
 -- Constraints for table `role_listing`
 --
 ALTER TABLE `role_listing`
@@ -3763,17 +3797,3 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
-
-DROP TABLE IF EXISTS `application`;
-CREATE TABLE IF NOT EXISTS `application` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `staff_id` int NOT NULL COMMENT 'Staff ID for staff',
-  `staff_f_name` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'First Name',
-  `staff_l_name` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Last Name',
-  `email` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Email Address',
-  `country` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Country of operation',
-  `Role_Name` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Role Name FK to Role-Role_Name',
-  PRIMARY KEY (`id`),
-  KEY `fk_rl_role_name` (`Role_Name`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
