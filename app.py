@@ -132,9 +132,22 @@ class Application(db.Model):
 @app.route('/')
 def view_roles():
     # Query the database to get a list of role listings
-    roles = Role.query.all()
+    roles = Role_Listing.query.all()
+    applications = Application.query.all()
 
-    return render_template('view_roles.html', roles=roles)
+    def assign_color(department):
+        color_map = {
+            "Consultancy": "bg-primary",
+            "Engineering": "bg-secondary",
+            "Finance": "bg-danger",
+            "HR": "bg-warning",
+            "IT": "bg-info",
+            "Sales": "bg-success",
+            "Solutioning": "bg-dark",
+        }
+        return color_map.get(department, "bg-light")
+
+    return render_template('view_roles.html', roles=roles, applications=applications, assign_color=assign_color)
 
 #staff apply for role
 @app.route('/apply_role', methods=['GET', 'POST'])
