@@ -132,14 +132,10 @@ class TestApp(unittest.TestCase):
     def test_update_hr(self):
 
         tester = app.test_client(self)
-        response = tester.get('/update_hr', content_type='html/text')
+        response = tester.get('/add_role_listing/create', content_type='html/text')
+
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'Update HR' in response.data)
-
-
-
-
-
+        self.assertTrue(b'Role Listing Created Successfully' in response.data)
 
 
 
