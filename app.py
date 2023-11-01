@@ -62,6 +62,8 @@ class Staff_Skill(db.Model):
         primary_key=True)
     skill_name = db.Column(db.Integer, db.ForeignKey('skill.skill_name'),
         primary_key=True)
+    staff = db.relationship('Staff', backref='skills')
+    skill = db.relationship('Skill')
 
     def __repr__(self) -> str:
         return f"{self.skill_name}"
@@ -369,6 +371,40 @@ def get_role_skill():
     else:
         # Return an error response if the role skill is not found
         return jsonify({'error': 'Role skill not found'})
+    
+@app.route('/view_role_skill_match')
+def view_role_skill_match():
+    return render_template('view_role_skill_match.html')
+
+@app.route('/role_skill_match', methods=['GET', 'POST'])
+def role_skill_match():
+    if request.method == 'POST':
+        staff_id = request.form.get('staff_id')
+        role_name = request.form.get('role_name')
+    else:
+        staff_id = request.args.get('staff_id')
+        role_name = request.args.get('role_name')
+
+    if staff_id and role_name:
+        # Query the staff's skills from the database
+        staff_skills = Staff_Skill.query.filter_by(staff_id=staff_id).all()
+
+        # Query the required skills for the role from the database
+        role_skills = Role_Skill.query.filter_by(role_name=role_name).all()
+
+        # Extract skill names
+        staff_skill_names = [staff_skill.skill_name for staff_skill in staff_skills]
+        role_skill_names = [role_skill.skill_name for role_skill in role_skills]
+
+        # Check for role-skill matches
+        matches = [skill_name for skill_name in staff_skill_names if skill_name in role_skill_names]
+
+        if request.method == 'POST':
+            return render_template('view_role_skill_match.html', staff_id=staff_id, role_name=role_name, role_skill_matches=matches)
+        else:
+            return jsonify({'role_skill_match': matches})
+    else:
+        return jsonify({'error': 'Missing parameters'})
         
 if __name__ == "__main__":
     app.run(debug=True)

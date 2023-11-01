@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Role-Skill Match</title>
+</head>
+<body>
+    <h1>Role-Skill Match</h1>
+    <form id="roleSkillForm">
+        <label for="staff_id">Staff ID:</label>
+        <input type="text" id="staff_id" name="staff_id" required><br><br>
+
+        <label for="role_name">Role Name:</label>
+        <input type="text" id="role_name" name="role_name" required><br><br>
+
+        <input type="submit" value="Check Role-Skill Match">
+    </form>
+
+    <div id="results" style="display: none;">
+        <h2>Role-Skill Match Results:</h2>
+        <p>Staff ID: <span id="staff_id_result"></span></p>
+        <p>Role Name: <span id="role_name_result"></span></p>
+        <p>Role-Skill Matches:</p>
+        <ul id="role_skill_matches"></ul>
+    </div>
+
+    <script>
+        // JavaScript code to handle form submission and AJAX request
+        document.getElementById("roleSkillForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+    
+            const staffId = document.querySelector('input[name="staff_id"]').value;
+            const roleName = document.querySelector('input[name="role_name"]').value;
+    
+            fetch("/role_skill_match", {
+                method: "POST",
+                body: JSON.stringify({ staff_id: staffId, role_name: roleName }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.role_skill_match) {
+                        document.getElementById("staff_id").textContent = staffId;
+                        document.getElementById("role_name").textContent = roleName;
+    
+                        const roleSkillMatches = data.role_skill_match;
+                        const roleSkillMatchesList = document.getElementById("role_skill_matches");
+                        roleSkillMatchesList.innerHTML = "";
+                        roleSkillMatches.forEach((match) => {
+                            const listItem = document.createElement("li");
+                            listItem.textContent = match;
+                            roleSkillMatchesList.appendChild(listItem);
+                        });
+    
+                        document.getElementById("results").style.display = "block";
+                    }
+                })
+                .catch((error) => console.error("Error:", error));
+        });
+    </script>
+    
+</body>
+</html>
