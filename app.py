@@ -358,6 +358,32 @@ def get_roles():
 
     return jsonify(role_list)
 
+@app.route('/edit_role_listing/<role_name>', methods=['GET', 'POST'])
+def edit_role_listing(role_name):
+    role_listing = Role_Listing.query.filter_by(role_name=role_name).first()
+    all_roles = Role.query.all()  # Fetch all available roles for the dropdown
+
+    if request.method == 'POST':
+        # Check if the role name has been changed
+        new_role_name = request.form['role_name']
+        if new_role_name != role_listing.role_name:
+            # Update role name in the role listing and related tables
+            role_listing.role_name = new_role_name
+            # You may need to update related tables like Role_Skill, Role_Applicants, etc.
+
+        # Update other details
+        role_listing.deadline = request.form['deadline']
+        role_listing.department = request.form['department']
+
+        # Commit changes to the database
+        db.session.commit()
+
+        # Redirect to the view roles page or any other suitable page
+        return redirect(url_for('update_roles'))
+
+    # Render the edit role listing form with the role name and all available roles
+    return render_template('edit_role_listing.html', role_listing=role_listing, all_roles=all_roles)
+
 @app.route('/get_role_skill', methods=['GET'])
 def get_role_skill():
     role_name = request.args.get('roleName')
