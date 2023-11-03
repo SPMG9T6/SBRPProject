@@ -151,6 +151,27 @@ def view_roles():
 
     return render_template('view_roles.html', roles=roles, applications=applications, assign_color=assign_color)
 
+@app.route('/hr')
+def update_roles():
+    # Query the database to get a list of role listings
+    roles = Role_Listing.query.all()
+    applications = Application.query.all()
+
+    def assign_color(department):
+        color_map = {
+            "Consultancy": "bg-primary",
+            "Engineering": "bg-secondary",
+            "Finance": "bg-danger",
+            "HR": "bg-warning",
+            "IT": "bg-info",
+            "Sales": "bg-success",
+            "Solutioning": "bg-dark",
+        }
+        return color_map.get(department, "bg-light")
+
+    return render_template('update_roles.html', roles=roles, applications=applications, assign_color=assign_color)
+
+
 #staff apply for role
 @app.route('/apply_role', methods=['GET', 'POST'])
 def apply_role():
@@ -364,16 +385,8 @@ def edit_role_listing(role_name):
     all_roles = Role.query.all()  # Fetch all available roles for the dropdown
 
     if request.method == 'POST':
-        # Check if the role name has been changed
-        new_role_name = request.form['role_name']
-        if new_role_name != role_listing.role_name:
-            # Update role name in the role listing and related tables
-            role_listing.role_name = new_role_name
-            # You may need to update related tables like Role_Skill, Role_Applicants, etc.
-
         # Update other details
         role_listing.deadline = request.form['deadline']
-        role_listing.department = request.form['department']
 
         # Commit changes to the database
         db.session.commit()
