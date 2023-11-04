@@ -6,7 +6,9 @@ from app import app, db, Role, Role_Applicants
 
 class TestApp(unittest.TestCase):
     def setUp(self):
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://' + \
+                                            'root:root' + \
+                                            '@localhost:3306/sbrpdb'
         app.config['TESTING'] = True
         self.app = app.test_client()
         db.create_all()
