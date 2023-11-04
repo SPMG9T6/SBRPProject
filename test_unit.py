@@ -334,10 +334,6 @@ def test_update_hr_boundary(self):
     response = tester.get('/add_role_listing/create/10000', content_type='html/text')
     self.assertEqual(response.status_code, 200)
 
-
-
-
-
 if __name__ == '__main__':
     unittest.main()
 
