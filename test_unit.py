@@ -315,7 +315,7 @@ class TestApp(unittest.TestCase):
     def test_view_hr_boundary(self):
         tester = app.test_client(self)
 
-                # Test with smallest possible HR ID (assuming it's 1)
+        # Test with smallest possible HR ID (assuming it's 1)
         response = tester.get('/view_hr/1', content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
