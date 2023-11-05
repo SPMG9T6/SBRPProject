@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Applicant List</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Applicants List</h1>
+
+    <table>
+        <tr>
+            <th>Applicant ID</th>
+            <th>Role Name</th>
+            <th>Applicant First Name</th>
+            <th>Applicant Last Name</th>
+            <th>Email</th>
+            <th>Country</th>
+            <th>Matched Skills</th>
+        </tr>
+        {% for application, staff_skill in applicants %}
+            <tr>
+                <td>{{ application.staff_id }}</td>
+                <td>{{ application.role_name }}</td>
+                <td>{{ application.staff_f_name }}</td>
+                <td>{{ application.staff_l_name }}</td>
+                <td>{{ application.email }}</td>
+                <td>{{ application.country }}</td>
+                <td>
+                    {% if staff_skill.skill_name %}
+                        {{ staff_skill.skill_name }}
+                    {% else %}
+                        No matched skills
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

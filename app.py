@@ -131,10 +131,31 @@ class Application(db.Model):
         self.country = country
     
     
+
+
 @app.route('/')
 def view_roles():
     # Query the database to get a list of role listings
-    roles = Role_Listing.query.all()
+    roles = db.session.query(Role.role_name, Role.role_desc, Role_Listing.deadline, Role_Listing.department) \
+        .join(Role_Listing, Role.role_name == Role_Listing.role_name) \
+        .all()
+    
+    role_skills = db.session.query(Role_Skill.role_name, Role_Skill.skill_name).all()
+
+    staff_id = 140001  # Specify the staff_id for which you want to check skills
+    staff_skills = set()  # Use a set to store staff skills
+
+    # Query the skills for the specific staff_id
+    for skill_name, in db.session.query(Staff_Skill.skill_name).filter(Staff_Skill.staff_id == staff_id):
+        staff_skills.add(skill_name)
+
+    # Create a dictionary to store skill names for each role
+    role_skill_dict = {}
+    for role_name, skill_name in role_skills:
+        if role_name not in role_skill_dict:
+            role_skill_dict[role_name] = []
+        role_skill_dict[role_name].append(skill_name)
+
     applications = Application.query.all()
 
     def assign_color(department):
@@ -149,7 +170,7 @@ def view_roles():
         }
         return color_map.get(department, "bg-light")
 
-    return render_template('view_roles.html', roles=roles, applications=applications, assign_color=assign_color)
+    return render_template('view_roles.html', roles=roles, applications=applications, role_skill_dict=role_skill_dict, staff_skills=staff_skills, assign_color=assign_color)
 
 @app.route('/hr')
 def update_roles():
@@ -444,6 +465,16 @@ def role_skill_match():
             return jsonify({'role_skill_match': matches})
     else:
         return jsonify({'error': 'Missing parameters'})
+    
+
+
+@app.route('/view_applicants')
+def view_applicants():
+    # Query the database to get a list of applicants and their skills
+    applicants = db.session.query(Application, Staff_Skill).join(
+        Staff_Skill, Application.staff_id == Staff_Skill.staff_id).all()
+
+    return render_template('applicants.html', applicants=applicants)
         
 if __name__ == "__main__":
     app.run(debug=True)

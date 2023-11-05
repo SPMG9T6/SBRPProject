@@ -6,22 +6,25 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>View Roles</title>
+
+    <style>
+        .green-text {
+            color: green;
+        }
+    </style>
 </head>
 <body>
 
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#">Welcome, Charlotte Wong</a>
+            <a class="navbar-brand" href="#">Welcome, Derek Tan [140001]</a> <span>  </span> 
+            <button class="btn btn-primary ml-2">My Applications</button>
         </div>
     </nav>
+    
  
     <div class="container mt-4">
-
-        <h1> My Applications </h1>
-
-        <p> test </p>
-
 
         <h1>Open Roles</h1>
         <div class="row">
@@ -139,13 +142,52 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <h6> Role Description: </h6>
+                                        <p>
+
+                                            <strong>Role Description:</strong> {{ role.role_desc }}
+
+                                        </p>
+                                        <p>
+                                        <strong>Skills:</strong>
+                                        <ul class="role-skills" data-role-name="{{ role.role_name }}">
+                                            {% set role_name = role.role_name %}
+                                            {% set total_skills = role_skill_dict.get(role_name, []) %}
+                                            {% set matching_skills = [] %}
+                                            {% for skill_name in total_skills %}
+                                                {% set is_matching = skill_name in staff_skills %}
+                                                <li class="{% if is_matching %}green-text{% endif %}" data-role-name="{{role_name}}">
+                                                    <span style="{% if is_matching %}font-weight: bold;{% endif %}">{{ skill_name }}</span>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                  </p>
+
+                                        
+                                        <p> <strong> Role-Skill Match: <span class="matchPercentageValue" data-role-name="{{ role_name }}">  </span></strong> </p>
+                                        
+                                            <p class="deadline" id="deadline"> <strong> Deadline: {{role.deadline}} </strong> </p>
 
 
 
-                
-                                            <h6> Skill-Match: </h6>
-                                            <h6 class="deadline" id="deadline"> Deadline: {{role.deadline}} </h6>
+    <!-- Modal to display the count of matches -->
+    <div class="modal fade" id="matchesModal" tabindex="-1" aria-labelledby="matchesModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="matchesModalLabel">Matches Count</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Number of Matches: 0
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
@@ -193,7 +235,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script>
-        // Function to show the modal
+        // Filter function
 
         $(document).ready(function() {
     $('input[name="department"]').on('change', function() {
@@ -244,6 +286,30 @@
             this.style.display = "none";
             document.getElementById("see-more-button").style.display = "block";
         });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const matchPercentageValueElements = document.querySelectorAll(".matchPercentageValue");
+
+    matchPercentageValueElements.forEach(function (element) {
+        const role_name = element.getAttribute("data-role-name");
+        const roleSkillsContainer = document.querySelector(`.role-skills[data-role-name="${role_name}"]`);
+        const totalSkillsCount = roleSkillsContainer.querySelectorAll("li").length;
+        const greenTextElements = roleSkillsContainer.querySelectorAll(".green-text");
+
+        const numberOfMatches = greenTextElements.length;
+        const matchPercentage = totalSkillsCount > 0 ? (numberOfMatches / totalSkillsCount) * 100 : 0;
+
+        // Set the text color based on the match percentage
+        if (matchPercentage < 30) {
+            element.style.color = "red";
+        } else {
+            element.style.color = "green";
+        }
+
+        element.textContent = `${matchPercentage.toFixed(2)}%`;
+    });
+});
 
     </script>
 </body>
