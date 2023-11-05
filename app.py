@@ -131,9 +131,18 @@ class Application(db.Model):
         self.country = country
     
     
+# app route decorator to home page
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        role = request.form.get('role')
+        if role == 'staff':
+            return redirect(url_for('view_roles'))
+        elif role == 'hr':
+            return redirect(url_for('update_roles'))
+    return render_template('index.html')
 
-
-@app.route('/')
+@app.route('/staff')
 def view_roles():
     # Query the database to get a list of role listings
     roles = db.session.query(Role.role_name, Role.role_desc, Role_Listing.deadline, Role_Listing.department) \
