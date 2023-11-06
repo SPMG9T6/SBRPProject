@@ -1,55 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Applicant List</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin: 20px auto;
-        }
-
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: center;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Applications</title>
+    <!-- Link Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-<body>
-    <h1>Applicants List</h1>
 
-    <table>
-        <tr>
-            <th>Applicant ID</th>
-            <th>Role Name</th>
-            <th>Applicant First Name</th>
-            <th>Applicant Last Name</th>
-            <th>Email</th>
-            <th>Country</th>
-            <th>Matched Skills</th>
-        </tr>
-        {% for application, staff_skill in applicants %}
-            <tr>
-                <td>{{ application.staff_id }}</td>
-                <td>{{ application.role_name }}</td>
-                <td>{{ application.staff_f_name }}</td>
-                <td>{{ application.staff_l_name }}</td>
-                <td>{{ application.email }}</td>
-                <td>{{ application.country }}</td>
-                <td>
-                    {% if staff_skill.skill_name %}
-                        {{ staff_skill.skill_name }}
-                    {% else %}
-                        No matched skills
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
+<style>
+    .nav-link.active {
+        background-color: transparent;
+        border: 2px solid #007bff;
+        color: #007bff;
+        border-radius: 10px;
+    }
+</style>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Welcome, Sally Loh</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('update_roles')}}">Roles</a> 
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('view_applicants')}}">Applicants</a> 
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Role Name</th>
+                    <th>Staff Name</th>
+                    <th>Staff Skills</th>
+                    <th>Role Skills</th>
+                    <th>Matching Skills</th>
+                    <th>Role Skill Match</th>
+                    <th>Status</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in applications %}
+                <tr>
+                    <td>{{ data.role_name }}</td>
+                    <td>{{ data.staff_name }}</td>
+                        <td>
+                            <div class="btn-group-vertical rounded">
+                                {% for skill in data.staff_skills %}
+                                    <button class="btn btn-info mb-2 rounded">{{ skill }}</button>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="btn-group-vertical rounded">
+                                {% for skill in data.role_skills %}
+                                    <button class="btn btn-primary mb-2 rounded">{{ skill }}</button>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="btn-group-vertical rounded">
+                                {% for skill in data.matching_skills %}
+                                    <button class="btn btn-success mb-2 rounded">{{ skill }}</button>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    <td>{{ data.role_skill_match }}%</td>
+                    <td>
+                        <select name="status">
+                            <option value="Pending Status">Pending Status</option>
+                            <option value="Interview In Progress">Interview In Progress</option>
+                            <option value="Shortlisted">Shortlisted</option>
+                            <option value="Accept">Accept</option>
+                            <option value="Reject">Reject</option>
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Link Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

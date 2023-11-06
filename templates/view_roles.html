@@ -166,31 +166,6 @@
                                         
                                             <p class="deadline" id="deadline"> <strong> Deadline: {{role.deadline}} </strong> </p>
 
-
-
-    <!-- Modal to display the count of matches -->
-    <div class="modal fade" id="matchesModal" tabindex="-1" aria-labelledby="matchesModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="matchesModalLabel">Matches Count</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    Number of Matches: 0
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -204,24 +179,7 @@
                                     {% endfor %}
                                 </div>
                                 
-                                <div id="hidden-cards" class="row" style="display: none;">
-                                    <!-- Loop through the rest of the roles -->
-                                    {% for role in roles[6:] %}
-                                        <div class="col-md-4 mb-4">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h5 class="card-title">{{ role.role_name }}</h5>
-                                                    <p class="card-text">{{ role.role_desc | truncate(100, True, '...') }}</p>
-                                                    <a href="javascript:void(0);" onclick="showModal('modal{{ loop.index + 5 }}')">Read More</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- Modal for hidden cards -->
-                                        <div class="modal fade" id="modal{{ loop.index + 5 }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ loop.index + 5 }}" aria-hidden="true">
-                                            <!-- Modal content for hidden cards here -->
-                                        </div>
-                                    {% endfor %}
-                                </div>
+
                         
                                 <!-- "See More" button to reveal hidden cards -->
                                 <div class="text-center">

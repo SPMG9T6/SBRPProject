@@ -5,28 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <title>View Roles</title>
+    <title>HR Management</title>
+    <style>
+.nav-link.active {
+            background-color: transparent; /* Set the background color to transparent */
+            border: 2px solid #007bff; /* Add a blue border */
+            color: #007bff; /* Change the text color to blue */
+            border-radius: 10px; /* Add border-radius for rounded corners */
+        }
+    </style>
 </head>
 <body>
-
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="#">Welcome, Sally Loh</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Roles</a> 
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href=" {{ url_for('view_applicants')}}">Applicants</a> 
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
+    
  
-    <div class="container mt-4">
-
-        <h1> My Applications </h1>
-
-        <p> test </p>
+    <div class="container">
+        <div class="welcome-section">
+        </div>
 
 
-        <h1>Open Roles</h1>
+ 
+
+<p>
+
+</p>
         <div class="row">
+            <div class="quick-action-buttons d-flex justify-content-center">
+                <div class="button-container">
+                    <a href="http://127.0.0.1:5500/templates/add_role_listing.html" class="btn btn-light mr-2">Create New Role</a>
+                </div>
+            </div>
             <!-- Filter box on the left, taking up 1/3 of the column -->
             <div class="col-md-2 mt-4">
+
+                
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Filter</h4>
@@ -114,7 +144,7 @@
                         <p class="text-center">No filter selected. Please select a filter.</p>
                     </div>
                     <!-- Loop through the first 6 roles -->
-                    {% for role in roles[:6] %}
+                    {% for role in roles %}
                         <div class="col-md-6 mb-4 card-container" data-department="{{role.department}}">
                             <div class="card">
                                 <div class="card-body">
@@ -139,15 +169,12 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <h6> Role Description: </h6>
+                                     {{ role.role_desc }}
+                                     <p>
 
+                                     </p>
 
-
-                
-                                            <h6> Skill-Match: </h6>
                                             <h6 class="deadline" id="deadline"> Deadline: {{role.deadline}} </h6>
-
-
 
 
                                     </div>
@@ -162,32 +189,8 @@
                         
                                     {% endfor %}
                                 </div>
-                                
-                                <div id="hidden-cards" class="row" style="display: none;">
-                                    <!-- Loop through the rest of the roles -->
-                                    {% for role in roles[6:] %}
-                                        <div class="col-md-4 mb-4">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h5 class="card-title">{{ role.role_name }}</h5>
-                                                    <p class="card-text">{{ role.role_desc | truncate(100, True, '...') }}</p>
-                                                    <a href="javascript:void(0);" onclick="showModal('modal{{ loop.index + 5 }}')">Read More</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- Modal for hidden cards -->
-                                        <div class="modal fade" id="modal{{ loop.index + 5 }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ loop.index + 5 }}" aria-hidden="true">
-                                            <!-- Modal content for hidden cards here -->
-                                        </div>
-                                    {% endfor %}
-                                </div>
+                            
                         
-                                <!-- "See More" button to reveal hidden cards -->
-                                <div class="text-center">
-                                    <button id="see-more-button" class="btn btn-primary">See More</button>
-                                    <button id="hide-button" class="btn btn-danger" style="display: none;">Hide</button>
-                                </div>
-                            </div>
     
     <!-- JavaScript and Bootstrap scripts here -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -204,7 +207,6 @@
             .get();
 
         // Hide all card containers by default
-        $('.card-container').hide();
 
         if (selectedDepartments.length > 0) {
             // Show card containers for the selected departments

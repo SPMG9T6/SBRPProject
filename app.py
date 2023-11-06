@@ -184,7 +184,11 @@ def view_roles():
 @app.route('/hr')
 def update_roles():
     # Query the database to get a list of role listings
-    roles = Role_Listing.query.all()
+    # Query the database to get a list of role listings
+    roles = db.session.query(Role.role_name, Role.role_desc, Role_Listing.deadline, Role_Listing.department) \
+        .join(Role_Listing, Role.role_name == Role_Listing.role_name) \
+        .all()
+    
     applications = Application.query.all()
 
     def assign_color(department):
@@ -200,6 +204,7 @@ def update_roles():
         return color_map.get(department, "bg-light")
 
     return render_template('update_roles.html', roles=roles, applications=applications, assign_color=assign_color)
+
 
 
 #staff apply for role
@@ -234,141 +239,6 @@ def thank_you():
     return render_template('thank_you.html')
 
 
-# create role
-@app.route("/role/<action>", methods=['GET','POST'])
-def role_action(action):
-    if request.method == 'POST':
-        if action == "create":
-            role_name = request.form['role_name']
-            role_desc = request.form['role_desc']
-            new_role = Role(role_name=role_name, role_desc=role_desc)
-            db.session.add(new_role)
-            db.session.commit()
-            resp = {'response':'create successfully', 'role_name':role_name, 'role_desc':role_desc}
-            return render_template('response.html', resp=resp)
-
-        elif action == "read":
-            all_role = Role.query.all()
-            if all_role:
-                resp = [{'role_name':row.role_name,'role_desc':row.role_desc} for row in all_role]
-            return jsonify(resp)
-
-        elif action == "update":
-            all_role = Role.query.filter_by(role_name=request.form['name']).first()
-            if all_role:
-                role_name = request.form['new_name']
-                role_desc = request.form['new_desc']
-                if role_name:
-                    all_role.role_name = role_name
-                if role_desc:
-                    all_role.role_desc = role_desc
-                db.session.commit()
-                resp = {'response':'updated successfully', 'role_name':role_name, 'role_desc':role_desc}
-                return resp
-            else:
-                resp = {'response':'wrong role name'}
-                return resp
-
-        elif action == "delete":
-            all_role = Role.query.filter_by(role_name=request.form['name']).first()
-            if all_role:
-                db.session.delete(all_role)
-                db.session.commit()
-                resp = {'response':'deleted successfully'}
-                return resp
-            else:
-                resp = {'response':'wrong role name'}
-                return resp
-
-        elif action == "search":
-            all_role = Role.query.filter((Role.role_name.contains(request.form['query'])) | (Role.role_desc.contains(request.form['query'])))
-            if all_role:
-                resp = []
-                for row in all_role:
-                    resp = [{'role_name':row.role_name,'role_desc':row.role_desc} for row in all_role]
-                return resp
-            else:
-                resp = {'response':'no! data available'}
-                return resp
-
-        elif action == "apply":
-            role_name = request.form['role_name']
-            staff_id = request.form['staff_id']
-            or_role = Role.query.filter_by(role_name=role_name).first()
-            or_staff = Staff.query.filter_by(staff_id=staff_id).first()
-            if or_role and or_staff:
-                new_entry = Role_Applicants(role=or_role.role_name, staff=or_staff.staff_id)
-                db.session.add(new_entry)
-                db.session.commit()
-                resp = {'response': f'{or_staff.staff_f_name} Successfully Applied for {or_role.role_name}'}
-                return resp
-            else:
-                resp = {'response':'something wrong'}
-                return resp
-        
-@app.route('/role-applicant-skills/<action>', methods=['GET','POST'])
-def skills_of_role_applicants(action):
-    # skills applicant have skill applicant dont have
-    if request.method == 'POST':
-        if action == "read":
-            role_name = request.form['role_name']
-            role_id = Role.query.filter_by(role_name=role_name)
-            if role_id:
-                role_id = role_id.first().sno
-                all_applicants = Role_Applicants.query.filter_by(role = role_id)
-                # skills_of_applicant = Staff_Skill.query.filter_by(staff_id = all_applicants.staff)
-                resp = []
-                for i in all_applicants:
-                    all_skills = []
-                    all_skills_query = Staff_Skill.query.filter_by(staff_id=i.staff)
-                    for j in all_skills_query:
-                        all_skills.append(Skill.query.filter_by(sno=j.skill_name).first().skill_name)
-                    resp.append({'name':Staff.query.filter_by(staff_id=i.staff).first().staff_f_name, 'skills':all_skills})
-                return resp
-            else:
-                resp = {'response':'wrong role name'}
-                return resp
-
-        
-
-@app.route('/applicant-skills-match/<action>', methods=['GET','POST'])
-def applicant_skills_match(action):
-    # skills applicaent have skill applicatent dont have
-    if request.method == 'POST':
-        if action == "check":
-            role_name = request.form['role_name']
-            role_id = Role.query.filter_by(role_name=role_name)
-            if role_id:
-                role_id = role_id.first().sno
-                all_roles = Role_Skill.query.filter_by(role_name=role_id)
-                skills_required = [Skill.query.filter_by(sno=row.skill_name).first().skill_name for row in all_roles]
-                
-                all_applicants = Role_Applicants.query.filter_by(role = role_id)
-                # skills_of_applicant = Staff_Skill.query.filter_by(staff_id = all_applicants.staff)
-                resp = []
-
-                for i in all_applicants:
-                    skills_match = []
-                    skills_not_match = []
-                    staff_skills = []
-
-                    all_skills_query = Staff_Skill.query.filter_by(staff_id=i.staff)
-                    
-                    for j in all_skills_query:
-                        skill_name = Skill.query.filter_by(sno=j.skill_name).first().skill_name
-                        staff_skills.append(skill_name)
-                        if skill_name in skills_required:
-                            skills_match.append(skill_name)
-                        else:
-                            skills_not_match.append(skill_name)
-                    resp.append({'name':Staff.query.filter_by(staff_id=i.staff).first().staff_f_name,'staff_skills':staff_skills, 'skills_required':skills_required, 'skills_match':skills_match, 'skills_not_match':skills_not_match})
-                return resp
-            else:
-                resp = {'response':'wrong role name'}
-                return resp
-            
-
-# Route to add a new role listing
 
 @app.route('/add_role_listing/create', methods=['GET', 'POST'])
 def add_role_listing():
@@ -377,7 +247,6 @@ def add_role_listing():
         deadline = request.form['deadline']
         department = request.form['department']
 
-        # Create a new role listing
         new_role_listing = Role_Listing(role_name=role_name, deadline=deadline, department=department)
 
         # Add the role listing to the database
@@ -415,16 +284,12 @@ def edit_role_listing(role_name):
     all_roles = Role.query.all()  # Fetch all available roles for the dropdown
 
     if request.method == 'POST':
-        # Update other details
         role_listing.deadline = request.form['deadline']
 
-        # Commit changes to the database
         db.session.commit()
 
-        # Redirect to the view roles page or any other suitable page
         return redirect(url_for('update_roles'))
 
-    # Render the edit role listing form with the role name and all available roles
     return render_template('edit_role_listing.html', role_listing=role_listing, all_roles=all_roles)
 
 @app.route('/get_role_skill', methods=['GET'])
@@ -445,45 +310,42 @@ def get_role_skill():
 def view_role_skill_match():
     return render_template('view_role_skill_match.html')
 
-@app.route('/role_skill_match', methods=['GET', 'POST'])
-def role_skill_match():
-    if request.method == 'POST':
-        staff_id = request.form.get('staff_id')
-        role_name = request.form.get('role_name')
-    else:
-        staff_id = request.args.get('staff_id')
-        role_name = request.args.get('role_name')
-
-    if staff_id and role_name:
-        # Query the staff's skills from the database
-        staff_skills = Staff_Skill.query.filter_by(staff_id=staff_id).all()
-
-        # Query the required skills for the role from the database
-        role_skills = Role_Skill.query.filter_by(role_name=role_name).all()
-
-        # Extract skill names
-        staff_skill_names = [staff_skill.skill_name for staff_skill in staff_skills]
-        role_skill_names = [role_skill.skill_name for role_skill in role_skills]
-
-        # Check for role-skill matches
-        matches = [skill_name for skill_name in staff_skill_names if skill_name in role_skill_names]
-
-        if request.method == 'POST':
-            return render_template('view_role_skill_match.html', staff_id=staff_id, role_name=role_name, role_skill_matches=matches)
-        else:
-            return jsonify({'role_skill_match': matches})
-    else:
-        return jsonify({'error': 'Missing parameters'})
-    
 
 
 @app.route('/view_applicants')
 def view_applicants():
-    # Query the database to get a list of applicants and their skills
-    applicants = db.session.query(Application, Staff_Skill).join(
-        Staff_Skill, Application.staff_id == Staff_Skill.staff_id).all()
+    applications = db.session.query(Application).all()
 
-    return render_template('applicants.html', applicants=applicants)
+    application_data = []
+
+    for application in applications:
+        application_info = {
+            'role_name': application.role_name,
+            'staff_name': f"{application.staff_f_name} {application.staff_l_name}",
+            'staff_skills': [],
+            'role_skills': [],
+            'matching_skills': [],
+            'role_skill_match': 0.0,
+        }
+
+        staff_skills = db.session.query(Staff_Skill).filter(Staff_Skill.staff_id == application.staff_id).all()
+        application_info['staff_skills'] = [skill.skill_name for skill in staff_skills]
+
+        role_skills = db.session.query(Role_Skill).filter(Role_Skill.role_name == application.role_name).all()
+        application_info['role_skills'] = [skill.skill_name for skill in role_skills]
+
+        matching_skills = set(application_info['staff_skills']) & set(application_info['role_skills'])
+        application_info['matching_skills'] = list(matching_skills)
+
+        # Calculate role skill match percentage
+        total_role_skills = len(application_info['role_skills'])
+        if total_role_skills > 0:
+            role_skill_match = (len(matching_skills) / total_role_skills) * 100
+            application_info['role_skill_match'] = round(role_skill_match, 2)
+
+        application_data.append(application_info)
+
+    return render_template('applicants.html', applications=application_data)
         
 if __name__ == "__main__":
     app.run(debug=True)
