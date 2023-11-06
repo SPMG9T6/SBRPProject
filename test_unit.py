@@ -3,6 +3,7 @@ import json
 from flask import url_for
 import unittest
 from app import app, db, Role, Role_Applicants
+from app import app, db, Role, Role_Applicants, Staff
 
 class TestApp(unittest.TestCase):
     def setUp(self):
