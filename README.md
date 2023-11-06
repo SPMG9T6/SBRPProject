@@ -10,7 +10,7 @@ The Skills-Based Role Portal is a web application that allows All-In-One staff t
 - [Usage](#usage)
 - [Features](#features)
 
-## Installation
+### Installation
 
 To run the Skills-Based Role Portal, follow these steps:
 
@@ -27,7 +27,7 @@ Step 3: Set up the database.
 - Access phpMyAdmin and create a new database or import the provided sbrpdb database.
 - Import the database by dropping it if it already exists.
 
-## Usage
+### Usage 
 
 How to run the Flask application:
 Step 1: Open a terminal in VSC
@@ -44,7 +44,7 @@ python app.py
 
 Step 4: Access the portal by going to http://localhost:5000
 
-## Features
+### Features
 
 Role Application: All-In-One staff can apply for roles and check their role-skill match.
 
