@@ -27,6 +27,8 @@ Step 3: Set up the database.
 - Access phpMyAdmin and create a new database or import the provided sbrpdb database.
 - Import the database by dropping it if it already exists.
 
+---
+
 ### Usage 
 
 How to run the Flask application:
@@ -43,6 +45,8 @@ Step 3: Start the Flask app
 python app.py
 
 Step 4: Access the portal by going to http://localhost:5000
+
+---
 
 ### Features
 
