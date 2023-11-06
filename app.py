@@ -177,7 +177,7 @@ def view_roles():
             "Sales": "bg-success",
             "Solutioning": "bg-dark",
         }
-        return color_map.get(department, "bg-light")
+        return color_map.get(department, "bg-dark")
 
     return render_template('view_roles.html', roles=roles, applications=applications, role_skill_dict=role_skill_dict, staff_skills=staff_skills, assign_color=assign_color)
 
@@ -201,7 +201,7 @@ def update_roles():
             "Sales": "bg-success",
             "Solutioning": "bg-dark",
         }
-        return color_map.get(department, "bg-light")
+        return color_map.get(department, "bg-dark")
 
     return render_template('update_roles.html', roles=roles, applications=applications, assign_color=assign_color)
 
