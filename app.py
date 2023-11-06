@@ -285,6 +285,8 @@ def edit_role_listing(role_name):
 
     if request.method == 'POST':
         role_listing.deadline = request.form['deadline']
+        role_listing.department = request.form['department']
+
 
         db.session.commit()
 
