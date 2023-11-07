@@ -60,7 +60,7 @@
                         <form id="addRoleForm" action="http://localhost:5000/add_role_listing/create" method="POST">
                             <div class="mb-3">
                                 <label for="role_name" class="form-label">Role Name:</label>
-                                <select name="role_name" class="form-select">
+                                <select name="role_name" class="form-select" required oninvalid="this.setCustomValidity('Please select a role name')">
                                     <option value="" disabled selected>Select a Role</option>
                                 </select>
                             </div>
@@ -82,7 +82,8 @@
 
                             <div class="form-group">
                                 <label for="department">Department:</label>
-                                <select class="form-control" name="department">
+                                <select class="form-control" name="department" required>
+                                    <option value="" selected disabled>Select a department</option>
                                     <option value="Consultancy">Consultancy</option>
                                     <option value="Engineering">Engineering</option>
                                     <option value="Finance">Finance</option>
@@ -97,10 +98,13 @@
 
                             <div class="mb-3">
                                 <label for="date" id="deadline" class="form-label">Deadline:</label>
-                                <input type="text" id="datepicker" name="deadline" class="form-control">
+                                <input type="text" id="datepicker" name="deadline" class="form-control" required>
                             </div>
                             <button type="submit" class="btn btn-primary">Create Role</button>
+                            <a href="http://127.0.0.1:5000/hr" class="btn btn-secondary">Back to HR View</a>
+
                         </form>
+                        
                     </div>
                 </div>
             </div>
@@ -197,6 +201,8 @@
         window.onload = () => {
             populateRoles();
         };
+
+        
     </script>
 </body>
 </html>

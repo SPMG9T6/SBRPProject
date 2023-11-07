@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from sqlalchemy.exc import IntegrityError
 import json
 
 app = Flask(__name__)
@@ -238,25 +239,43 @@ def apply_role():
 def thank_you():
     return render_template('thank_you.html')
 
-
+@app.route('/error')
+def error():
+    return render_template('error.html')
 
 @app.route('/add_role_listing/create', methods=['GET', 'POST'])
 def add_role_listing():
+    deadline = ''  # Initialize deadline with an empty string
     if request.method == 'POST':
         role_name = request.form['role_name']
         deadline = request.form['deadline']
         department = request.form['department']
 
+        # Check for duplicate role listing in the database
+        existing_role_listing = Role_Listing.query.filter_by(role_name=role_name).first()
+
+        if existing_role_listing:
+            role_name = existing_role_listing.role_name
+            error_message = 'Please add another role'
+            return render_template('error.html', error_message=error_message, role_name=role_name)
+
         new_role_listing = Role_Listing(role_name=role_name, deadline=deadline, department=department)
 
         # Add the role listing to the database
         db.session.add(new_role_listing)
-        db.session.commit()
 
-        resp = {'response':'Role Listing Created Successfully', 'role_name':role_name, 'deadline':deadline, 'department':department}
-        return render_template('response.html', resp=resp)
-    
-    return render_template('add_role_listing.html', deadline=deadline, roles=role_name)
+        try:
+            db.session.commit()
+            resp = {'response': 'Role Listing Created Successfully', 'role_name': role_name, 'deadline': deadline, 'department': department}
+            return render_template('response.html', resp=resp)
+        except IntegrityError as e:
+            db.session.rollback()
+            error_message = 'An error occurred while creating the role listing. Please try again.'
+            return render_template('error.html', error_message=error_message)
+
+    return render_template('add_role_listing.html', deadline=deadline)  # Pass deadline to the template
+
+
 
 @app.route('/get_skills', methods=['GET'])
 def get_skills():
@@ -293,6 +312,24 @@ def edit_role_listing(role_name):
         return redirect(url_for('update_roles'))
 
     return render_template('edit_role_listing.html', role_listing=role_listing, all_roles=all_roles)
+
+@app.route('/delete_role/<role_name>', methods=['GET'])
+def delete_role(role_name):
+    # Query the role to be deleted
+    role_to_delete = Role_Listing.query.filter_by(role_name=role_name).first()
+
+    if role_to_delete:
+        try:
+            # Delete the role
+            db.session.delete(role_to_delete)
+            db.session.commit()
+            return redirect(url_for('update_roles'))  # Redirect to the role update page after deletion
+        except Exception as e:
+            # Handle any exceptions or errors that may occur during deletion
+            return render_template('error.html', error_message='An error occurred while deleting the role.')
+    else:
+        # Handle the case where the role does not exist
+        return render_template('error.html', error_message='Role not found.')
 
 @app.route('/get_role_skill', methods=['GET'])
 def get_role_skill():

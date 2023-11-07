@@ -192,60 +192,64 @@
                         
     
     <!-- JavaScript and Bootstrap scripts here -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <script>
-        // Function to show the modal
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Initial setup
+        filterRoles();
 
-        $(document).ready(function() {
-    $('input[name="department"]').on('change', function() {
-        const selectedDepartments = $('input[name="department"]:checked')
-            .map(function() {
+        $('input[name="department"]').on('change', function() {
+            filterRoles();
+        });
+
+        function filterRoles() {
+            const selectedDepartments = $('input[name="department"]:checked').map(function() {
                 return $(this).val();
-            })
-            .get();
+            }).get();
 
-        // Hide all card containers by default
+            // Hide all card containers by default
+            $('.card-container').hide();
 
-        if (selectedDepartments.length > 0) {
-            // Show card containers for the selected departments
-            selectedDepartments.forEach(function(department) {
-                $(`.card-container[data-department="${department}"]`).show();
-            });
+            if (selectedDepartments.length > 0) {
+                // Show card containers for the selected departments
+                selectedDepartments.forEach(function(department) {
+                    $(`.card-container[data-department="${department}"]`).show();
+                });
 
-            // Show the "See More" button
-            $('#see-more-button').show();
+                // Show the "See More" button
+                $('#see-more-button').show();
 
-            // Hide the "No filter selected" message
-            $('#noFilterSelected').hide();
-        } else {
-            // No filters selected, hide the "See More" button
-            $('#see-more-button').hide();
+                // Hide the "No filter selected" message
+                $('#noFilterSelected').hide();
+            } else {
+                // No filters selected, hide the "See More" button
+                $('#see-more-button').hide();
 
-            // Show the "No filter selected" message
-            $('#noFilterSelected').show();
+                // Show the "No filter selected" message
+                $('#noFilterSelected').show();
+            }
         }
     });
-});
 
-        function showModal(modalId) {
-            $('#'+modalId).modal('show');
-        }
+    function showModal(modalId) {
+        $('#'+modalId).modal('show');
+    }
 
-        // Function to show hidden cards
-        document.getElementById("see-more-button").addEventListener("click", function () {
-            document.getElementById("hidden-cards").style.display = "flex";
-            this.style.display = "none";
-            document.getElementById("hide-button").style.display = "block";
-        });
+    // Function to show hidden cards
+    document.getElementById("see-more-button").addEventListener("click", function () {
+        document.getElementById("hidden-cards").style.display = "flex";
+        this.style.display = "none";
+        document.getElementById("hide-button").style.display = "block";
+    });
 
-        // Function to hide additional cards
-        document.getElementById("hide-button").addEventListener("click", function () {
-            document.getElementById("hidden-cards").style.display = "none";
-            this.style.display = "none";
-            document.getElementById("see-more-button").style.display = "block";
-        });
+    // Function to hide additional cards
+    document.getElementById("hide-button").addEventListener("click", function () {
+        document.getElementById("hidden-cards").style.display = "none";
+        this.style.display = "none";
+        document.getElementById("see-more-button").style.display = "block";
+    });
+</script>
 
-    </script>
 </body>
 </html>
