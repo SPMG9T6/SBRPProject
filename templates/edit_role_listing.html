@@ -65,16 +65,8 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="department">Department:</label>
-                                <select class="form-control" name="department">
-                                    <option value="Consultancy">Consultancy</option>
-                                    <option value="Engineering">Engineering</option>
-                                    <option value="Finance">Finance</option>
-                                    <option value="HR">HR</option>
-                                    <option value="Sales">Sales</option>
-                                    <option value="IT">IT</option>
-                                    <option value="Solutioning">Solutioning</option>
-                                </select>
+                                <label for="department">Role Department:</label>
+                                <p class="form-control-static">{{ role_listing.department }}</p>
                             </div>
                             <button type="submit" class="btn btn-primary">Save Changes</button>
                         </form>
