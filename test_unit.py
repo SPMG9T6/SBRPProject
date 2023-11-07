@@ -1,9 +1,9 @@
 import unittest
 import json
 from flask import url_for
+from flask_sqlalchemy import SQLAlchemy
 import unittest
-from app import app, db, Role, Role_Applicants
-from app import app, db, Role, Role_Applicants, Staff
+from app import app, db, Role, Role_Applicants, Staff, Role_Listing, Application, Role_Skill, Staff_Skill, Skill, calculate_skill_match_percentage
 
 class TestApp(unittest.TestCase):
     def setUp(self):
@@ -12,395 +12,101 @@ class TestApp(unittest.TestCase):
                                             '@localhost:3306/sbrpdb'
         app.config['TESTING'] = True
         self.app = app.test_client()
-        db.create_all()
+        with app.app_context():
+            db.create_all()
 
     def tearDown(self):
-        db.session.remove()
-        db.drop_all()
+        with app.app_context():
+            db.session.remove()
+            db.drop_all()
 
-    def test_create_role(self):
-        response = self.app.post('/role/create', data=dict(role_name='Test Role', role_desc='This is a test role'))
+    def test_create_role_listing(self):
+        # Send a POST request to create a role with a department
+        response = self.app.post('/add_role_listing/create', data=dict(role_name='Test Role', department='Test Dept', deadline='2023-12-12'))
+
+        # Check the HTTP status code
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'create successfully', response.data)
-        role = Role.query.filter_by(role_name='Test Role').first()
-        self.assertIsNotNone(role)
-        self.assertEqual(role.role_desc, 'This is a test role')
 
-    def test_read_roles(self):
-        role1 = Role(role_name='Role 1', role_desc='This is role 1')
-        role2 = Role(role_name='Role 2', role_desc='This is role 2')
-        db.session.add_all([role1, role2])
+        # Check if the role has been added to the database
+        role_listing = Role_Listing.query.filter_by(role_name='Test Role').first()
+        self.assertIsNotNone(role_listing)
+        self.assertEqual(role_listing.department, 'Test Dept')
+
+    def test_update_role_listing(self):
+        # Create a role listing in the database
+        role_listing = Role_Listing(role_name='Test Role', department='Test Dept', deadline='2023-12-12')
+        db.session.add(role_listing)
         db.session.commit()
-        response = self.app.post('/role/read')
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Role 1', response.data)
-        self.assertIn(b'Role 2', response.data)
 
-    def test_update_role(self):
-        role = Role(role_name='Test Role', role_desc='This is a test role')
-        db.session.add(role)
+        # Send a POST request to update the role listing
+        response = self.app.post('/edit_role_listing/Test Role', data=dict(deadline='2024-01-01', department='Updated Department'))
+
+        # Check the HTTP status code
+        self.assertEqual(response.status_code, 302)
+
+        # Query the updated role listing from the database
+        updated_role_listing = Role_Listing.query.filter_by(role_name='Test Role').first()
+
+        # Assert that the role listing was updated
+        self.assertIsNotNone(updated_role_listing)
+        self.assertEqual(updated_role_listing.deadline, '2024-01-01')
+        self.assertEqual(updated_role_listing.department, 'Updated Department')
+
+
+
+    def test_delete_role_listing(self):
+        # Create a role listing
+        role_listing = Role_Listing(role_name='Test Role', department='Test Dept', deadline='2023-12-12')
+        db.session.add(role_listing)
         db.session.commit()
-        response = self.app.post('/role/update', data=dict(name='Test Role', new_name='New Role', new_desc='This is the new role'))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'updated successfully', response.data)
-        role = Role.query.filter_by(role_name='New Role').first()
-        self.assertIsNotNone(role)
-        self.assertEqual(role.role_desc, 'This is the new role')
 
-    def test_delete_role(self):
-        role = Role(role_name='Test Role', role_desc='This is a test role')
-        db.session.add(role)
-        db.session.commit()
-        response = self.app.post('/role/delete', data=dict(name='Test Role'))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'deleted successfully', response.data)
-        role = Role.query.filter_by(role_name='Test Role').first()
-        self.assertIsNone(role)
+        # Send a GET request to delete the role listing
+        response = self.app.get('/delete_role_listing/Test Role', follow_redirects=True)
 
-    def test_search_roles(self):
-        role1 = Role(role_name='Role 1', role_desc='This is role 1')
-        role2 = Role(role_name='Role 2', role_desc='This is role 2')
-        db.session.add_all([role1, role2])
-        db.session.commit()
-        response = self.app.post('/role/search', data=dict(query='role'))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Role 1', response.data)
-        self.assertIn(b'Role 2', response.data)
+        # Try to find the role listing in the database after deletion
+        role_listing = Role_Listing.query.filter_by(role_name='Test Role').first()
 
-    def test_apply_role(self):
-        role = Role(role_name='Test Role', role_desc='This is a test role')
-        staff = Staff(staff_id='123', staff_f_name='John', staff_l_name='Doe')
-        db.session.add_all([role, staff])
-        db.session.commit()
-        response = self.app.post('/role/apply', data=dict(role_name='Test Role', staff_id='123'))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Successfully Applied', response.data)
-        applicant = Role_Applicants.query.filter_by(role='Test Role', staff='123').first()
-        self.assertIsNotNone(applicant)
+        # Assert that the role listing is None (indicating it was deleted)
+        self.assertIsNone(role_listing)
 
-# Staff View Testing - Happy Path
+    # Staff Apply Role Testing - Happy Path
+    def test_apply_role_post(self):
+            # Simulate a POST request with form data
+            response = self.app.post('/apply_role', data=dict(
+                role_name='Test Role',
+                staff_id='14001',
+                staff_fname='Test F',
+                staff_lname='Test L',
+                email='test@gmail.com',
+                country='SG'
+            ), follow_redirects=True)  # Ensure you follow redirects
 
-    def test_view_employee(self):
-        tester = app.test_client(self)
-        response = tester.get('/view_employee', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'View Employee' in response.data)   
+            self.assertEqual(response.status_code, 200)  # Check if it's a successful response code (update based on your actual implementation)
 
-# Staff View Testing - Negative Path
+            # Check if the application has been added to the database
+            application = Application.query.filter_by(role_name='Test Role').first()  # Assuming you have an Application model
+            self.assertIsNotNone(application)
+            self.assertEqual(application.staff_id, '14001')
 
-    def test_view_non_existent_employee(self):
-        tester = app.test_client(self)
-        response = tester.get('/view_employee/9999', content_type='html/text')
-        self.assertEqual(response.status_code, 404)
+    def test_apply_role_get(self):
+        # Simulate a GET request to render the form
+        response = self.app.get('/apply_role', query_string={'role_name': 'Test Role'})
 
+        self.assertEqual(response.status_code, 200)  # Check if it's a successful response code (update based on your actual implementation)
+        # You can also add more assertions here to check the content of the rendered template if needed.
 
-# Staff View Testing - Boundary Path 
-
-    def test_view_employee_boundary(self):
-        tester = app.test_client(self)
-
-        # Test with smallest possible employee ID (assuming it's 1)
-        response = tester.get('/view_employee/1', content_type='html/text')
+    # View applicants
+    def test_view_applicants(self):
+        response = self.app.get('/view_applicants')
         self.assertEqual(response.status_code, 200)
 
-        # Test with largest possible employee ID (assuming it's 10000)
-        response = tester.get('/view_employee/10000', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
+    def test_calculate_skill_match_percentage(self):
+        role_skills = ['Skill1', 'Skill2', 'Skill3']
+        staff_skills = ['Skill2', 'Skill3', 'Skill4']
 
+        role_skill_match = calculate_skill_match_percentage(role_skills, staff_skills)
 
-# Staff Browse Testing - Happy Path
-
-    def test_browse_employee(self):
-        tester = app.test_client(self)
-        response = tester.get('/browse_employee', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'Browse Employee' in response.data)
-
-
-
-
-# Staff Filter roles Testing - Happy Path
-
-    def test_filter_roles(self):
-        tester = app.test_client(self)
-        response = tester.get('/filter_roles', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'Filter Roles' in response.data)
-
-# Staff Filter roles Testing - Negative Path
-        def test_filter_roles_non_existent(self):
-            tester = app.test_client(self)
-            response = tester.get('/filter_roles?role=NonExistentRole', content_type='html/text')
-            self.assertEqual(response.status_code, 404)
-
-# Staff Filter roles Testing - Boundary Path
-    def test_filter_roles_boundary(self):
-        tester = app.test_client(self)
-
-        # Test with smallest possible role ID (assuming it's 1)
-        response = tester.get('/filter_roles?role_id=1', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-        # Test with largest possible role ID (assuming it's 10000)
-        response = tester.get('/filter_roles?role_id=10000', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-
-# Staff Filter department Testing - Happy Path
-
-    def test_filter_department(self):
-        tester = app.test_client(self)
-        response = tester.get('/filter_department', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'Filter Department' in response.data)
-
-# Staff Filter department Testing - Negative Path
-    def test_filter_department_non_existent(self):
-        tester = app.test_client(self)
-        response = tester.get('/filter_department?department=NonExistentDepartment', content_type='html/text')
-        self.assertEqual(response.status_code, 404)
-
-# Staff Filter department Testing - Boundary Path
-    def test_filter_department_boundary(self):
-        tester = app.test_client(self)
-
-        # Test with smallest possible department ID (assuming it's 1)
-        response = tester.get('/filter_department?department_id=1', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-        # Test with largest possible department ID (assuming it's 10000)
-        response = tester.get('/filter_department?department_id=10000', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-
-# Staff Apply Testing - Happy Path
-    def test_apply(self):
-        tester = app.test_client(self)
-        response = tester.get('/apply', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'Apply' in response.data)
-
-# Staff Apply Testing - Negative Path
-    def test_apply_non_existent(self):
-        tester = app.test_client(self)
-        response = tester.get('/apply/9999', content_type='html/text')
-        self.assertEqual(response.status_code, 404)
-
-    # Staff Apply Testing - Boundary Path
-    def test_apply_boundary(self):
-        tester = app.test_client(self)
-
-        # Test with smallest possible application ID (assuming it's 1)
-        response = tester.get('/apply/1', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-        # Test with largest possible application ID (assuming it's 10000)
-        response = tester.get('/apply/10000', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-
-    # Hr View Tests - Happy Path
-    def test_view_hr(self):
-        tester = app.test_client(self)
-        response = tester.get('/view_hr', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'View HR' in response.data)
-
-    # HR View Tests - Negative Path
-    def test_view_hr_non_existent(self):
-        tester = app.test_client(self)
-        response = tester.get('/view_hr/9999', content_type='html/text')
-        self.assertEqual(response.status_code, 404)
-
-    # HR View Tests - Boundary Path
-    def test_view_hr_boundary(self):
-        tester = app.test_client(self)
-
-        # Test with smallest possible HR ID (assuming it's 1)
-        response = tester.get('/view_hr/1', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-        # Test with largest possible HR ID (assuming it's 10000)
-        response = tester.get('/view_hr/10000', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-
-    # HR CRU TESTS - Create, Read, Update
-
-    # HR Create Tests - Happy Path
-    def test_create_hr(self):
-        tester = app.test_client(self)
-        response = tester.get('/create_hr', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'Create HR' in response.data)
-
-
-    # HR Create Tests - Negative Path (Role Already Created)
-    def test_create_hr_already_created(self):
-        tester = app.test_client(self)
-        response = tester.get('/create_hr', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'Already Created' in response.data)
-
-    # HR Create Tests - Boundary Path 
-    def test_create_hr_boundary(self):
-        tester = app.test_client(self)
-
-        # Test with smallest possible HR ID (assuming it's 1)
-        response = tester.get('/create_hr/1', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-        # Test with largest possible HR ID (assuming it's 10000)
-        response = tester.get('/create_hr/10000', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-
-    # HR Read Tests - Happy Path
-    def test_read_hr(self):
-        tester = app.test_client(self)
-        response = tester.get('/read_hr', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'Read HR' in response.data)
-
-    # HR Read Tests - Negative Path
-    def test_read_hr_non_existent(self):
-        tester = app.test_client(self)
-        response = tester.get('/read_hr/9999', content_type='html/text')
-        self.assertEqual(response.status_code, 404)
-
-    # HR Read Tests - Boundary Path
-    def test_read_hr_boundary(self):
-        tester = app.test_client(self)
-
-        # Test with smallest possible HR ID (assuming it's 1)
-        response = tester.get('/read_hr/1', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-        # Test with largest possible HR ID (assuming it's 10000)
-        response = tester.get('/read_hr/10000', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-
-    # HR Update Tests - Happy Path
-    def test_update_hr(self):
-        tester = app.test_client(self)
-        response = tester.get('/update_hr', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'Update HR' in response.data)
-
-    # HR Update Tests - Negative Path
-    def test_update_hr_non_existent(self):
-        tester = app.test_client(self)
-        response = tester.get('/update_hr/9999', content_type='html/text')
-        self.assertEqual(response.status_code, 404)
-
-    # HR Update Tests - Boundary Path
-    def test_update_hr_boundary(self):
-        tester = app.test_client(self)
-
-        # Test with smallest possible HR ID (assuming it's 1)
-        response = tester.get('/update_hr/1', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-        # Test with largest possible HR ID (assuming it's 10000)
-        response = tester.get('/update_hr/10000', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-        # HR View Tests - Negative Path
-    def test_view_hr_non_existent(self):
-        tester = app.test_client(self)
-        response = tester.get('/view_hr/9999', content_type='html/text')
-        self.assertEqual(response.status_code, 404)
-
-            # HR View Tests - Boundary Path
-    def test_view_hr_boundary(self):
-        tester = app.test_client(self)
-
-        # Test with smallest possible HR ID (assuming it's 1)
-        response = tester.get('/view_hr/1', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-                # Test with largest possible HR ID (assuming it's 10000)
-        response = tester.get('/view_hr/10000', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-    # HR View Tests - Boundary Path
-    def test_view_hr_boundary(self):
-        tester = app.test_client(self)
-
-        # Test with smallest possible HR ID (assuming it's 1)
-        response = tester.get('/view_hr/1', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-        # Test with largest possible HR ID (assuming it's 10000)
-        response = tester.get('/view_hr/10000', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-
-    # HR Read Tests - Happy Path
-
-    def test_read_hr(self):
-
-        tester = app.test_client(self)
-        response = tester.get('/read_hr', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'Read HR' in response.data)
-
-    # HR Read Tests - Negative Path (Role Already Created)
-
-    def test_read_hr(self):
-                
-        tester = app.test_client(self)
-        response = tester.get('/read_hr', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'Role Listing Already Created' in response.data)
-
-    # HR Read Tests - Boundary Path
-    def test_read_hr_boundary(self):
-        tester = app.test_client(self)
-
-        # Test with smallest possible HR ID (assuming it's 1)
-        response = tester.get('/read_hr/1', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-        # Test with largest possible HR ID (assuming it's 10000)
-        response = tester.get('/read_hr/10000', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-
-    # HR Update Tests - Happy Path
-
-    def test_update_hr(self):
-
-        tester = app.test_client(self)
-        response = tester.get('/add_role_listing/create', content_type='html/text')
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'Role Listing Created Successfully' in response.data)
-
-    # HR Update Tests - Negative Path 
-
-    def test_update_hr(self):
-                    
-        tester = app.test_client(self)
-        response = tester.get('/add_role_listing/create', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'Role Listing Already Created' in response.data)
-
-    # HR Update Tests - Boundary Path
-
-    def test_update_hr_boundary(self):
-        tester = app.test_client(self)
-
-        # Test with smallest possible HR ID (assuming it's 1)
-        response = tester.get('/add_role_listing/create/1', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-        # Test with largest possible HR ID (assuming it's 10000)
-        response = tester.get('/add_role_listing/create/10000', content_type='html/text')
-        self.assertEqual(response.status_code, 200)
-
-
+        self.assertEqual(role_skill_match, 66.67)  # You should adjust this based on your expected result
 if __name__ == '__main__':
     unittest.main()
 

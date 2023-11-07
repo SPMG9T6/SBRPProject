@@ -115,13 +115,19 @@ class Role_Listing(db.Model):
         return f"{self.role_name}-{self.deadline}"
     
 class Application(db.Model):
+    __tablename__ = 'application'
     id = db.Column(db.Integer, primary_key=True)
-    staff_id = db.Column(db.String(50), db.ForeignKey('staff.staff_id'), nullable=False)
-    staff_f_name = db.Column(db.String(50), db.ForeignKey('staff.staff_f_name'), nullable=False)
-    staff_l_name = db.Column(db.String(50), db.ForeignKey('staff.staff_l_name'), nullable=False)
-    email = db.Column(db.String(50), db.ForeignKey('staff.email'), nullable=False)
-    country = db.Column(db.String(50), db.ForeignKey('staff.country'), nullable=False)
-    role_name = db.Column(db.String(50), db.ForeignKey('role.role_name'), primary_key=True)
+    staff_id = db.Column(db.String(10), nullable=False)
+    staff_f_name = db.Column(db.String(50), nullable=False)
+    staff_l_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+    country = db.Column(db.String(2), nullable=False)
+    role_name = db.Column(db.String(50), nullable=False)
+
+    # Define a unique constraint for the combination of staff_id and role_name
+    __table_args__ = (
+        db.UniqueConstraint('staff_id', 'role_name', name='uq_staff_role'),
+    )
 
     def __init__(self, role_name, staff_id, staff_f_name, staff_l_name, email, country):
         self.role_name = role_name
@@ -184,7 +190,6 @@ def view_roles():
 
 @app.route('/hr')
 def update_roles():
-    # Query the database to get a list of role listings
     # Query the database to get a list of role listings
     roles = db.session.query(Role.role_name, Role.role_desc, Role_Listing.deadline, Role_Listing.department) \
         .join(Role_Listing, Role.role_name == Role_Listing.role_name) \
@@ -313,8 +318,8 @@ def edit_role_listing(role_name):
 
     return render_template('edit_role_listing.html', role_listing=role_listing, all_roles=all_roles)
 
-@app.route('/delete_role/<role_name>', methods=['GET'])
-def delete_role(role_name):
+@app.route('/delete_role_listing/<role_name>', methods=['GET'])
+def delete_role_listing(role_name):
     # Query the role to be deleted
     role_to_delete = Role_Listing.query.filter_by(role_name=role_name).first()
 
@@ -385,7 +390,18 @@ def view_applicants():
         application_data.append(application_info)
 
     return render_template('applicants.html', applications=application_data)
-        
+
+# For unit test
+def calculate_skill_match_percentage(staff_skills, role_skills):
+    matching_skills = set(staff_skills) & set(role_skills)
+    total_role_skills = len(role_skills)
+
+    if total_role_skills > 0:
+        role_skill_match = (len(matching_skills) / total_role_skills) * 100
+        return round(role_skill_match, 2)
+
+    return 0.0  # Or any other default value
+
 if __name__ == "__main__":
     app.run(debug=True)
 
