@@ -1,54 +1,138 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Role Listing</title>
+    
     <!-- Include Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Apply for Role</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <style>
+        h1 {
+            text-align: center;
+            padding: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        @media (max-width: 768px) {
+            form {
+                padding: 10px;
+            }
+        }
+        /* Style the form group */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        /* Style the form label */
+        .form-label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #333; /* Text color */
+        }
+        
+        /* Style the form select */
+        .form-select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc; /* Border color */
+            border-radius: 5px;
+            background-color: #f5f5f5; /* Background color */
+            color: #333; /* Text color */
+        }
+        
+        /* Style the form select options */
+        .form-select option {
+            background-color: #fff; /* Background color for options */
+            color: #333; /* Text color for options */
+        }
+        
+        /* Style the placeholder text for the select */
+        .form-select option[disabled]:first-child {
+            color: #999; /* Placeholder text color */
+        }
+        
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center">Applying for: {{ role_name }}</h1>
-        <form method="post">
-            <div class="mb-3">
-                <label for="role_name" class="form-label">Role Name:</label>
-                <input type="text" class="form-control" id="role_name" name="role_name" value="{{ role_name }}" readonly>
-            </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="text-center">Application For: <br> {{ role_name }}</h1>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="mb-3">
+                                <label for="role_name" class="form-label">Role Name:</label>
+                                <input type="text" class="form-control" id="role_name" name="role_name" value="{{ role_name }}" readonly>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="staff_id" class="form-label">Staff ID:</label>
+                                <input type="text" class="form-control" id="staff_id" name="staff_id" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="staff_fname" class="form-label">First Name:</label>
+                                <input type="text" class="form-control" id="staff_fname" name="staff_fname" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="staff_lname" class="form-label">Last Name:</label>
+                                <input type="text" class="form-control" id="staff_lname" name="staff_lname" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email:</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="country" class="form-label">Country:</label>
+                                <select class="form-select" id="country" name="country" required oninvalid="this.setCustomValidity('Please select a country')">
+                                    <option value="" selected disabled>Select a country</option>
+                                    {% for country in countries %}
+                                    <option value="{{ country }}">{{ country }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary mb-3">Submit Application</button>
+                        </form>
 
-            <div class="mb-3">
-                <label for="staff_id" class="form-label">Staff ID:</label>
-                <input type="text" class="form-control" id="staff_id" name="staff_id" required>
+                        <a href="http://127.0.0.1:5000/staff" class="btn btn-secondary">Back to Staff View</a>
+                    </div>
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label for="staff_fname" class="form-label">First Name:</label>
-                <input type="text" class="form-control" id="staff_fname" name="staff_fname" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="staff_lname" class="form-label">Last Name:</label>
-                <input type="text" class="form-control" id="staff_lname" name="staff_lname" required>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email:</label>
-                <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="country" class="form-label">Country:</label>
-                <select class="form-select" id="country" name="country" required>
-                    <option value="" selected disabled>Select a country</option>
-                    {% for country in countries %}
-                        <option value="{{ country }}">{{ country }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Submit Application</button>
-        </form>
+        </div>
     </div>
-
+    
     <!-- Include Bootstrap JS and Popper.js for Bootstrap functionality -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Role Listing</title>
-
+    
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
@@ -77,13 +77,12 @@
                                     <option value="Solutioning">Solutioning</option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="submit" class="btn btn-primary mb-3">Save Changes</button>
                         </form>
-                        <br>
                         <div class="form-group">
                             <button type="button" class="btn btn-danger" id="deleteRoleBtn">Delete Role Listing</button>
                         </div>
-                        
+                        <a href="http://127.0.0.1:5000/hr" class="btn btn-secondary">Back to HR View</a>
                     </div>
                 </div>
             </div>
@@ -99,13 +98,13 @@
                 todayHighlight: true   // Highlight today's date
             });
         });
-
+        
         document.getElementById('deleteRoleBtn').addEventListener('click', function () {
-        if (confirm("Are you sure you want to delete this role?")) {
-            // If the user confirms, redirect to the Flask route that handles role deletion
-            window.location.href = "{{ url_for('delete_role_listing', role_name=role_listing.role_name) }}";
-        }
-    });
+            if (confirm("Are you sure you want to delete this role?")) {
+                // If the user confirms, redirect to the Flask route that handles role deletion
+                window.location.href = "{{ url_for('delete_role_listing', role_name=role_listing.role_name) }}";
+            }
+        });
     </script>        
 </body>
 </html>
