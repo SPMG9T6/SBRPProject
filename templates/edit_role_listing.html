@@ -66,7 +66,7 @@
                             
                             <div class="form-group">
                                 <label for="department">Department:</label>
-                                <select class="form-control" name="department" required>
+                                <select class="form-control" name="department" required oninvalid="this.setCustomValidity('Please select a department')">
                                     <option value="" selected disabled>Select a department</option>
                                     <option value="Consultancy">Consultancy</option>
                                     <option value="Engineering">Engineering</option>
