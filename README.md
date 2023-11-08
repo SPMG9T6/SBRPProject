@@ -19,14 +19,16 @@ Step 1: Clone the repository.
    ```bash
    git clone https://github.com/yourusername/skills-based-role-portal.git
    cd skills-based-role-portal
-
+   ```
 Step 2: Install the required dependencies.
-pip install -r requirements.txt --no-cache-dir
+```bash
+   pip install -r requirements.txt --no-cache-dir
+```
 Step 3: Set up the database.
 - Turn on your WAMP/MAMP server. 
 - Access phpMyAdmin and create a new database or import the provided sbrpdb database.
 - Import the database by dropping it if it already exists.
-   ```
+   
 
 
 ### Usage 
