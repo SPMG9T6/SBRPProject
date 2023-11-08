@@ -26,8 +26,8 @@ Step 3: Set up the database.
 - Turn on your WAMP/MAMP server. 
 - Access phpMyAdmin and create a new database or import the provided sbrpdb database.
 - Import the database by dropping it if it already exists.
+   ```
 
----
 
 ### Usage 
 
