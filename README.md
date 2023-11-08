@@ -27,7 +27,6 @@ Step 2: Install the required dependencies.
 Step 3: Set up the database.
 - Turn on your WAMP/MAMP server. 
 - Access phpMyAdmin and create a new database or import the provided sbrpdb database.
-- Import the database by dropping it if it already exists.
    
 
 
@@ -50,6 +49,8 @@ Step 4: Access the portal by going to http://localhost:5000
 
 Step 5: For direct access to HR View, you go to http://localhost:5000/hr
 For direct access to Staff View, go to http://localhost:5000/staff
+
+Step 6: To access unit tests, go to test_unit.py
 
 ### Features
 
