@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 25, 2023 at 12:13 PM
--- Server version: 8.0.21
--- PHP Version: 7.4.9
+-- Generation Time: Nov 08, 2023 at 08:49 AM
+-- Server version: 8.0.34
+-- PHP Version: 8.0.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -32,7 +32,7 @@ USE `sbrpdb`;
 DROP TABLE IF EXISTS `access_control`;
 CREATE TABLE IF NOT EXISTS `access_control` (
   `Access_ID` int NOT NULL,
-  `Access_Control_ Name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `Access_Control_ Name` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   PRIMARY KEY (`Access_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -56,15 +56,22 @@ DROP TABLE IF EXISTS `application`;
 CREATE TABLE IF NOT EXISTS `application` (
   `id` int NOT NULL AUTO_INCREMENT,
   `staff_id` int NOT NULL COMMENT 'Staff ID for staff',
-  `staff_f_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'First Name',
-  `staff_l_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Last Name',
-  `email` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Email Address',
-  `country` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Country of operation',
-  `Role_Name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Role Name FK to Role-Role_Name',
+  `staff_f_name` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'First Name',
+  `staff_l_name` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Last Name',
+  `email` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Email Address',
+  `country` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Country of operation',
+  `Role_Name` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Role Name FK to Role-Role_Name',
   PRIMARY KEY (`id`),
   KEY `fk_rl_role_name` (`Role_Name`) USING BTREE,
   KEY `fk_staff_id` (`staff_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `application`
+--
+
+INSERT INTO `application` (`id`, `staff_id`, `staff_f_name`, `staff_l_name`, `email`, `country`, `Role_Name`) VALUES
+(12, 210044, 'Chandara', 'Tith', 'Phuc.Luong@allinone.com.sg', 'Vietnam', 'Account Manager');
 
 -- --------------------------------------------------------
 
@@ -74,8 +81,8 @@ CREATE TABLE IF NOT EXISTS `application` (
 
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE IF NOT EXISTS `role` (
-  `Role_Name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Role_Name',
-  `Role_Desc` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Job Description',
+  `Role_Name` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Role_Name',
+  `Role_Desc` longtext CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Job Description',
   PRIMARY KEY (`Role_Name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -115,9 +122,9 @@ INSERT INTO `role` (`Role_Name`, `Role_Desc`) VALUES
 
 DROP TABLE IF EXISTS `role_listing`;
 CREATE TABLE IF NOT EXISTS `role_listing` (
-  `Role_Name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Role Name FK to Role-Role_Name',
+  `Role_Name` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Role Name FK to Role-Role_Name',
   `deadline` date NOT NULL COMMENT 'deadline for application',
-  `department` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'department',
+  `department` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'department',
   PRIMARY KEY (`Role_Name`,`deadline`),
   KEY `fk_rl_role_name` (`Role_Name`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -127,7 +134,11 @@ CREATE TABLE IF NOT EXISTS `role_listing` (
 --
 
 INSERT INTO `role_listing` (`Role_Name`, `deadline`, `department`) VALUES
-('Developer', '2023-10-25', 'IT');
+('Developer', '2023-10-25', 'IT'),
+('Engineering Director', '2023-12-08', 'Engineering'),
+('Finance  Executive', '2023-12-01', 'Finance'),
+('HR Executive', '2024-01-24', 'HR'),
+('Sales Manager', '2023-11-07', 'Sales');
 
 -- --------------------------------------------------------
 
@@ -137,8 +148,8 @@ INSERT INTO `role_listing` (`Role_Name`, `deadline`, `department`) VALUES
 
 DROP TABLE IF EXISTS `role_skill`;
 CREATE TABLE IF NOT EXISTS `role_skill` (
-  `Role_Name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Role Name FK to Role-Role_Name',
-  `Skill_Name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Skill Name FK to Skill->Skill_Name',
+  `Role_Name` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Role Name FK to Role-Role_Name',
+  `Skill_Name` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Skill Name FK to Skill->Skill_Name',
   PRIMARY KEY (`Role_Name`,`Skill_Name`),
   KEY `fk_sn_skill_name` (`Skill_Name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -399,8 +410,8 @@ INSERT INTO `role_skill` (`Role_Name`, `Skill_Name`) VALUES
 
 DROP TABLE IF EXISTS `skill`;
 CREATE TABLE IF NOT EXISTS `skill` (
-  `Skill_Name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Name of the Skill',
-  `Skill_Desc` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Description of the Skill',
+  `Skill_Name` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Name of the Skill',
+  `Skill_Desc` longtext CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Description of the Skill',
   PRIMARY KEY (`Skill_Name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -500,11 +511,11 @@ INSERT INTO `skill` (`Skill_Name`, `Skill_Desc`) VALUES
 DROP TABLE IF EXISTS `staff`;
 CREATE TABLE IF NOT EXISTS `staff` (
   `Staff_ID` int NOT NULL COMMENT 'Staff ID for staff',
-  `Staff_FName` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'First Name',
-  `Staff_LName` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Last Name',
-  `Dept` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Team or dept staff belong to',
-  `Country` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Country of operation',
-  `Email` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Email Address',
+  `Staff_FName` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'First Name',
+  `Staff_LName` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Last Name',
+  `Dept` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Team or dept staff belong to',
+  `Country` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Country of operation',
+  `Email` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Email Address',
   `Role` int NOT NULL COMMENT 'Role of user FK to Access_Control->Access_ID',
   PRIMARY KEY (`Staff_ID`),
   KEY `fk_role_access_id` (`Role`)
@@ -1080,7 +1091,7 @@ INSERT INTO `staff` (`Staff_ID`, `Staff_FName`, `Staff_LName`, `Dept`, `Country`
 DROP TABLE IF EXISTS `staff_skill`;
 CREATE TABLE IF NOT EXISTS `staff_skill` (
   `Staff_ID` int NOT NULL COMMENT 'Staff ID FK to Staff->Staff_ID',
-  `Skill_Name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Name of the Skill FK to Skill->Skill_Name',
+  `Skill_Name` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'Name of the Skill FK to Skill->Skill_Name',
   PRIMARY KEY (`Skill_Name`,`Staff_ID`),
   KEY `fk_sid_staff_id` (`Staff_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

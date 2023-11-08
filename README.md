@@ -48,11 +48,14 @@ python app.py
 
 Step 4: Access the portal by going to http://localhost:5000
 
+Step 5: For direct access to HR View, you go to http://localhost:5000/hr
+For direct access to Staff View, go to http://localhost:5000/staff
+
 ### Features
 
 Role Application: All-In-One staff can apply for roles and check their role-skill match.
 
-Role Listings: HR managers can create, update, and browse role listings.
+Role Listings: HR managers can create, update, and browse role listings. HR managers can also view skills of role applicants. 
 
 Skill Matching: The portal calculates and displays the percentage of matching skills between applicants and roles.
 
