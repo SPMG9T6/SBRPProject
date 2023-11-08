@@ -46,8 +46,6 @@ python app.py
 
 Step 4: Access the portal by going to http://localhost:5000
 
----
-
 ### Features
 
 Role Application: All-In-One staff can apply for roles and check their role-skill match.
